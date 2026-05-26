@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comentaristas</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #e8001d;
+    --yellow: #ffd700;
+    --blue: #00aaff;
+    --green: #00c853;
+    --bg-main: linear-gradient(135deg,
+      #c3c7cc 0%, #b5bbc2 25%, #a6adb5 50%, #9aa2ab 75%, #8e979f 100%);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg-main);
+    background-attachment: fixed;
+    color: #111;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 200;
+    background: #0d0d0d;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 100px;
+    border-bottom: 1px solid #222;
+  }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 0.85rem; letter-spacing: 0.08em; text-decoration: none;
+    text-transform: uppercase; position: relative; transition: opacity 0.2s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 2px; background: currentColor; transition: width 0.25s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a:hover { opacity: 0.8; }
+  .nav-links a.red   { color: var(--red); }
+  .nav-links a.white { color: #fff; }
+  .nav-links a.green { color: var(--green); }
+  .nav-links a.blue  { color: var(--blue); }
+  .nav-links a.pink  { color: #ff6ec7; }
+  .nav-links a.orange  { color: #ff7801; }
+
+  .nav-item { position: relative; display: inline-block; }
+  .dropdown {
+    position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    background: #111; padding: 1rem 2rem; display: flex; flex-direction: column;
+    gap: 0.8rem; opacity: 0; visibility: hidden; transition: 0.3s ease; z-index: 300;
+  }
+  .dropdown a {
+    color: var(--blue); text-decoration: none;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.8rem; transition: color 0.2s;
+  }
+  .dropdown a:hover { color: #fff; }
+  .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+  .dropdown-fia a { color: var(--green); }
+  .dropdown-fia a:hover { color: #fff; }
+
+  .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+  .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+  .nav-right a {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.8rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #fff;
+    text-decoration: underline; display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; padding: 2.5rem 2rem;
+  }
+  .hero-text { position: relative; z-index: 1; text-align: center; }
+  .hero-text h1 {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: 0.08em;
+    text-transform: uppercase; color: #111; animation: fadeUp 0.7s ease both;
+  }
+  .hero-text p {
+    font-size: 0.9rem; color: #333; margin-top: 0.5rem;
+    letter-spacing: 0.05em; font-weight: 300; animation: fadeUp 0.7s 0.1s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── FRANJAS VERTICALES ── */
+  .panels-container {
+    display: flex;
+    max-width: 1300px;
+    margin: 0 auto 4rem;
+    padding: 0 2rem;
+    gap: 0;
+    height: 680px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 50px rgba(0,0,0,0.3);
+  }
+
+  .panel {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    cursor: pointer;
+    transition: flex 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow: hidden;
+  }
+
+  .panel:hover {
+    flex: 2.2;
+  }
+
+  /* Fondo de cada panel */
+  .panel-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center top;
+    transition: transform 0.55s ease;
+  }
+  .panel:hover .panel-bg {
+    transform: scale(1.04);
+  }
+
+
+  .panel-lobato .panel-bg {
+    background: linear-gradient(160deg, #1a0000 0%, #5c0000 40%, #a80000 70%, #e8001d 100%);
+  }
+  .panel-cucerella .panel-bg {
+    background: linear-gradient(160deg, #001535 0%, #003080 40%, #0057c8 70%, #00aaff 100%);
+  }
+  .panel-delarosa .panel-bg {
+    background: linear-gradient(160deg, #001a0a 0%, #00471c 40%, #008a36 70%, #00c853 100%);
+  }
+
+  /* Emoji grande como avatar decorativo */
+  .panel-avatar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    font-size: 7rem;
+    opacity: 0.15;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    user-select: none;
+    pointer-events: none;
+  }
+  .panel:hover .panel-avatar {
+    opacity: 0.28;
+    transform: translate(-50%, -65%) scale(1.1);
+  }
+
+  /* Número decorativo */
+  .panel-number {
+    position: absolute;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 5rem;
+    color: rgba(255,255,255,0.06);
+    letter-spacing: -0.03em;
+    transition: opacity 0.4s;
+    user-select: none;
+  }
+
+  /* Línea lateral de color */
+  .panel-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    right: 0;
+    width: 3px;
+    opacity: 0.4;
+    transition: opacity 0.4s, width 0.4s;
+  }
+  .panel:last-child .panel-line { display: none; }
+  .panel:hover .panel-line { opacity: 0; }
+
+  .panel-lobato .panel-line    { background: #e8001d; }
+  .panel-cucerella .panel-line { background: #00aaff; }
+
+  /* Contenido inferior */
+  .panel-overlay {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 55%, transparent 100%);
+    padding: 2rem 1.8rem 2rem;
+    transition: padding 0.4s ease;
+  }
+  .panel:hover .panel-overlay {
+    padding: 2rem 2.2rem 2rem;
+  }
+
+  .panel-role {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    opacity: 0.7;
+  }
+  .panel-lobato    .panel-role { color: #ff6b6b; }
+  .panel-cucerella .panel-role { color: #66ccff; }
+  .panel-delarosa  .panel-role { color: #66e896; }
+
+  .panel-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .panel:hover .panel-name {
+    white-space: normal;
+  }
+
+  .panel-tag {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-bottom: 0.9rem;
+    color: #fff;
+  }
+  .panel-lobato    .panel-tag { background: #c70000; }
+  .panel-cucerella .panel-tag { background: #0070c0; }
+  .panel-delarosa  .panel-tag { background: #007a30; }
+
+  .panel-desc {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 500;
+    font-size: 0.88rem;
+    letter-spacing: 0.03em;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.6;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.4s ease;
+    opacity: 0;
+  }
+  .panel:hover .panel-desc {
+    max-height: 200px;
+    opacity: 1;
+  }
+
+  /* Stats row */
+  .panel-stats {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 0.9rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease 0.05s, opacity 0.4s ease 0.05s;
+  }
+  .panel:hover .panel-stats {
+    max-height: 60px;
+    opacity: 1;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .stat-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: #fff;
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* Hint de expansión visible cuando no está hover */
+  .panel-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    writing-mode: vertical-rl;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .panel:hover .panel-hint { opacity: 0; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .panels-container {
+      flex-direction: column;
+      height: auto;
+    }
+    .panel {
+      min-height: 260px;
+    }
+    .panel:hover { flex: 1; }
+    .panel-hint { display: none; }
+    .panel-desc { max-height: 200px; opacity: 1; }
+    .panel-stats { max-height: 60px; opacity: 1; }
+    .panel-avatar { font-size: 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-links">
+    <a href="mini-historia.html" class="red">Mini Historia</a>
+    <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+    <div class="nav-item">
+      <a href="#" class="green">FIA</a>
+      <div class="dropdown dropdown-fia">
+        <a href="definicion-fia.html">Definición FIA</a>
+        <a href="ruedas.html">Ruedas</a>
+        <a href="reglamento.html">Reglamento</a>
+        <a href="estrategia.html">Estrategia</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#" class="blue">Equipos</a>
+      <div class="dropdown">
+        <a href="pilotos.html">Pilotos</a>
+        <a href="escuderias.html">Escuderías</a>
+        <a href="circuitos.html">Circuitos</a>
+      </div>
+    </div>
+    <a href="comentaristas.html" class="pink">Comentaristas</a>
+    <a href="fan-zone.html" class="orange">Fan Zone</a>
+  </div>
+  <div class="nav-right">
+    <a href="index.html">Diccionario de F1</a>
+    <img src="fotos/logo.png" alt="Logo F1">
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>🎙️ Comentaristas</h1>
+    <p>Las voces españolas que narran la emoción de la Fórmula 1</p>
+  </div>
+</section>
+
+<!-- TRES FRANJAS VERTICALES -->
+<section style="max-width:1300px; margin:0 auto; padding:0 2rem 4rem;">
+  <div class="panels-container">
+
+    <!-- ── ANTONIO LOBATO ── -->
+    <div class="panel panel-lobato">
+      <div class="panel-bg"></div>
+      <div class="panel-avatar"><img src="fotos/lobato.jpg"></div>
+      <div class="panel-number"></div>
+      <div class="panel-line"></div>
+      <span class="panel-hint"></span>
+      <div class="panel-overlay">
+        <div class="panel-role">🇪🇸 · Narrador principal</div>
+        <div class="panel-name">Antonio Lobato</div>
+        <span class="panel-tag">DAZN F1 · Desde 1993</span>
+        <p class="panel-desc">
+          La voz más icónica de la F1 en español. Antonio Lobato lleva más de 30 años narrando el Gran Circo, primero en Canal+ y ahora en DAZN. Su estilo apasionado, sus exclamaciones y su profundo conocimiento del deporte lo han convertido en un referente absoluto para los aficionados hispanohablantes. Capaz de transmitir la adrenalina de una salida como nadie.
+        </p>
+        <div class="panel-stats">
+          <div class="stat">
+            <span class="stat-val">30+</span>
+            <span class="stat-lbl">Años en F1</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val">500+</span>
+            <span class="stat-lbl">GPs narrados</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val">#1</span>
+            <span class="stat-lbl">Voz referente</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TONI CUCERELLA ── -->
+    <div class="panel panel-cucerella">
+      <div class="panel-bg"></div>
+      <div class="panel-avatar"><img src="fotos/cuquerella.jpg"></div>
+      <div class="panel-number"></div>
+      <div class="panel-line"></div>
+      <span class="panel-hint"></span>
+      <div class="panel-overlay">
+        <div class="panel-role">🇪🇸 · Analista técnico</div>
+        <div class="panel-name">Toni Cucerella</div>
+        <span class="panel-tag">DAZN F1 · Análisis técnico</span>
+        <p class="panel-desc">
+          El cerebro técnico de la retransmisión española. Toni Cucerella aporta el análisis más detallado sobre estrategias de carrera, configuraciones aerodinámicas y decisiones de los ingenieros. Su capacidad para explicar conceptos complejos de forma clara y amena lo hace imprescindible durante los grandes premios. Complementa a Lobato a la perfección.
+        </p>
+        <div class="panel-stats">
+          <div class="stat">
+            <span class="stat-val">F1</span>
+            <span class="stat-lbl">Especialista</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val">Técnico</span>
+            <span class="stat-lbl">Perfil</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val">DAZN</span>
+            <span class="stat-lbl">Canal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PEDRO DE LA ROSA ── -->
+    <div class="panel panel-delarosa">
+      <div class="panel-bg"></div>
+      <div class="panel-avatar"><img src="fotos/delarosa.webp"></div>
+      <div class="panel-number"></div>
+      <span class="panel-hint"></span>
+      <div class="panel-overlay">
+        <div class="panel-role">🇪🇸 · Piloto & experto</div>
+        <div class="panel-name">Pedro de la Rosa</div>
+        <span class="panel-tag">Ex-piloto F1 · 2° en GP Bahrein 2006</span>
+        <p class="panel-desc">
+          Del cockpit al micrófono. Pedro de la Rosa compitió en F1 desde 1999 hasta 2012, siendo piloto de pruebas de McLaren y titular de varios equipos. Su experiencia real al volante le permite dar una perspectiva única sobre lo que sienten los pilotos, las limitaciones físicas del coche y las decisiones que se toman a 300 km/h. Un lujo tenerlo en cabina.
+        </p>
+        <div class="panel-stats">
+          <div class="stat">
+            <span class="stat-val">13</span>
+            <span class="stat-lbl">Temporadas F1</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val">81</span>
+            <span class="stat-lbl">GPs disputados</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val">1</span>
+            <span class="stat-lbl">Podio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilotos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #e8001d;
+    --yellow: #ffd700;
+    --blue: #00aaff;
+    --green: #00c853;
+    --bg-main: linear-gradient(135deg,
+      #c3c7cc 0%, #b5bbc2 25%, #a6adb5 50%, #9aa2ab 75%, #8e979f 100%);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg-main);
+    background-attachment: fixed;
+    color: #111;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 200;
+    background: #0d0d0d;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 100px;
+    border-bottom: 1px solid #222;
+  }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 0.85rem; letter-spacing: 0.08em; text-decoration: none;
+    text-transform: uppercase; position: relative; transition: opacity 0.2s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 2px; background: currentColor; transition: width 0.25s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a:hover { opacity: 0.8; }
+  .nav-links a.red   { color: var(--red); }
+  .nav-links a.white { color: #fff; }
+  .nav-links a.green { color: var(--green); }
+  .nav-links a.blue  { color: var(--blue); }
+  .nav-links a.pink  { color: #ff6ec7; }
+  .nav-links a.orange  { color: #ff7801; }
+
+  .nav-item { position: relative; display: inline-block; }
+  .dropdown {
+    position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    background: #111; padding: 1rem 2rem; display: flex; flex-direction: column;
+    gap: 0.8rem; opacity: 0; visibility: hidden; transition: 0.3s ease; z-index: 300;
+  }
+  .dropdown a {
+    color: var(--blue); text-decoration: none;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.8rem; transition: color 0.2s;
+  }
+  .dropdown a:hover { color: #fff; }
+  .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+  .dropdown-fia a { color: var(--green); }
+  .dropdown-fia a:hover { color: #fff; }
+
+  .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+  .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+  .nav-right a {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.8rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #fff;
+    text-decoration: underline; display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; padding: 3rem 2rem;
+  }
+  .hero-text { position: relative; z-index: 1; text-align: center; }
+  .hero-text h1 {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: 0.08em;
+    text-transform: uppercase; color: #111; animation: fadeUp 0.7s ease both;
+  }
+  .hero-text p {
+    font-size: 0.9rem; color: #333; margin-top: 0.5rem;
+    letter-spacing: 0.05em; font-weight: 300; animation: fadeUp 0.7s 0.1s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── GRID ── */
+  .cards-section {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18), 0 0 0 1px var(--red);
+    border-color: var(--red);
+  }
+
+  .card-img {
+    height: 160px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    position: relative; overflow: hidden;
+    padding: 0 1.2rem 1rem;
+  }
+  .card-img::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--red); z-index: 1;
+  }
+  .card-img-bg {
+    position: absolute; inset: 0;
+    opacity: 0.2;
+    transition: opacity 0.4s ease;
+  }
+  .card:hover .card-img-bg { opacity: 0.32; }
+
+  .driver-number {
+    position: absolute; top: 8px; left: 12px;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: 3.8rem; line-height: 1;
+    color: rgba(255,255,255,0.14);
+    z-index: 1; user-select: none; letter-spacing: -0.02em;
+  }
+  .team-badge {
+    position: absolute; top: 10px; right: 12px;
+    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 700; font-family: 'Barlow Condensed', sans-serif;
+    padding: 3px 8px; border-radius: 4px; z-index: 2;
+  }
+  .driver-emoji {
+    font-size: 4.5rem; z-index: 2; line-height: 1;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  }
+  .driver-code {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: 2.8rem; letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.9);
+    z-index: 2; line-height: 1;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  /* ── BODY ── */
+  .card-body { padding: 1.1rem 1.2rem 1.3rem; }
+  .card-header {
+    display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem;
+  }
+  .card-flag { font-size: 1.6rem; }
+  .card-name {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: 1.25rem; letter-spacing: 0.05em; text-transform: uppercase; color: #111; line-height: 1;
+  }
+  .card-team {
+    font-size: 0.75rem; color: #555; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: 500; margin-top: 2px;
+  }
+  .card-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem; margin-bottom: 0.9rem;
+  }
+  .stat {
+    background: #111; border-radius: 6px; padding: 0.55rem 0.6rem;
+    border-left: 2px solid var(--red);
+  }
+  .stat-label {
+    font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 2px;
+  }
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 0.95rem; color: #fff; letter-spacing: 0.02em;
+  }
+  .card-record {
+    background: #0d0d0d; border-radius: 7px; padding: 0.65rem 0.9rem;
+    display: flex; align-items: center; gap: 0.7rem;
+    border: 1px solid #2a2a2a;
+  }
+  .record-icon { font-size: 1.3rem; }
+  .record-lbl { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: #777; }
+  .record-time {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: 1.1rem; color: var(--yellow); letter-spacing: 0.04em; line-height: 1;
+  }
+  .record-who { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* ── HOVER OVERLAY ── */
+  .card-extra {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.96);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 1.4rem 1.4rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+    overflow: hidden;
+  }
+  .card:hover .card-extra {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Franja de color superior en el overlay */
+  .card-extra::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--red);
+  }
+
+  .extra-header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .extra-flag { font-size: 1.8rem; }
+  .extra-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.3rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1;
+  }
+  .extra-team-name {
+    font-size: 0.7rem;
+    color: #aaa;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-top: 3px;
+  }
+
+  .extra-bio {
+    font-size: 0.8rem;
+    color: #ccc;
+    line-height: 1.55;
+    font-weight: 300;
+    border-left: 2px solid var(--red);
+    padding-left: 0.75rem;
+  }
+
+  .extra-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  .extra-item {
+    background: #1a1a1a;
+    border-radius: 6px;
+    padding: 0.5rem 0.7rem;
+    border-left: 2px solid #333;
+  }
+  .extra-item.accent { border-left-color: var(--yellow); }
+  .extra-item-lbl {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 2px;
+  }
+  .extra-item-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+  .extra-item.accent .extra-item-val { color: var(--yellow); }
+
+  .extra-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #222;
+    color: #bbb;
+    border: 1px solid #333;
+  }
+  .tag.hot { background: rgba(232,0,29,0.15); color: #ff4d5e; border-color: #e8001d44; }
+  .tag.gold { background: rgba(255,215,0,0.12); color: var(--yellow); border-color: #ffd70044; }
+  .tag.blue { background: rgba(0,170,255,0.12); color: var(--blue); border-color: #00aaff44; }
+  .tag.green { background: rgba(0,200,83,0.12); color: var(--green); border-color: #00c85344; }
+
+  /* Fondos por escudería */
+  .bg-redbull  { background: linear-gradient(135deg, #1e3a5f, #cc1e2b); }
+  .bg-ferrari  { background: linear-gradient(135deg, #cc0000, #ffcc00); }
+  .bg-mercedes { background: linear-gradient(135deg, #00d2be, #1a1a1a); }
+  .bg-mclaren  { background: linear-gradient(135deg, #ff8000, #0c0c0c); }
+  .bg-alpine   { background: linear-gradient(135deg, #0090ff, #ff0087); }
+  .bg-aston    { background: linear-gradient(135deg, #006f62, #cedc00); }
+  .bg-williams { background: linear-gradient(135deg, #005aff, #b0c4de); }
+  .bg-haas     { background: linear-gradient(135deg, #b6babd, #e8001d); }
+  .bg-sauber   { background: linear-gradient(135deg, #52e252, #1a1a1a); }
+  .bg-rb       { background: linear-gradient(135deg, #6692ff, #1e2340); }
+
+  /* Badges */
+  .badge-redbull  { background: #cc1e2b; color: #fff; }
+  .badge-ferrari  { background: #cc0000; color: #fff; }
+  .badge-mercedes { background: #00d2be; color: #111; }
+  .badge-mclaren  { background: #ff8000; color: #111; }
+  .badge-alpine   { background: #0090ff; color: #fff; }
+  .badge-aston    { background: #006f62; color: #fff; }
+  .badge-williams { background: #005aff; color: #fff; }
+  .badge-haas     { background: #e8001d; color: #fff; }
+  .badge-sauber   { background: #52e252; color: #111; }
+  .badge-rb       { background: #6692ff; color: #111; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-links">
+    <a href="mini-historia.html" class="red">Mini Historia</a>
+    <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+    <div class="nav-item">
+      <a href="#" class="green">FIA</a>
+      <div class="dropdown dropdown-fia">
+        <a href="definicion-fia.html">Definición FIA</a>
+        <a href="ruedas.html">Ruedas</a>
+        <a href="reglamento.html">Reglamento</a>
+        <a href="estrategia.html">Estrategia</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#" class="blue">Equipos</a>
+      <div class="dropdown">
+        <a href="pilotos.html">Pilotos</a>
+        <a href="escuderias.html">Escuderías</a>
+        <a href="circuitos.html">Circuitos</a>
+      </div>
+    </div>
+    <a href="comentaristas.html" class="pink">Comentaristas</a>
+    <a href="fan-zone.html" class="orange">Fan Zone</a>
+  </div>
+  <div class="nav-right">
+    <a href="index.html">Diccionario de F1</a>
+    <img src="fotos/logo.png" alt="Logo F1">
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>🏎️ Pilotos</h1>
+    <p>Los protagonistas de la parrilla · Temporada 2024</p>
+  </div>
+</section>
+
+<!-- CARDS -->
+<section class="cards-section">
+  <div class="cards-grid">
+
+    <!-- MAX VERSTAPPEN -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-redbull"></div>
+        <span class="driver-number">1</span>
+        <span class="team-badge badge-redbull">Red Bull</span>
+        <span class="driver-emoji"><img src="fotos/verstappen.png" style="width: 200px"></span>
+        <span class="driver-code">VER</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇳🇱</span>
+          <div><div class="card-name">Max Verstappen</div><div class="card-team">Oracle Red Bull Racing</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#1</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">62+</div></div>
+          <div class="stat"><div class="stat-label">Títulos</div><div class="stat-value">4</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🏆</span>
+          <div><div class="record-lbl">Campeón del mundo</div><div class="record-time">2021 · 2022 · 2023 · 2024</div><div class="record-who">Dominador absoluto de la era moderna</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇳🇱</span>
+          <div><div class="extra-name">Max Verstappen</div><div class="extra-team-name">Oracle Red Bull Racing</div></div>
+        </div>
+        <p class="extra-bio">El neerlandés más rápido de la historia. Hijo del expiloto Jos Verstappen, debutó en F1 con 17 años y se convirtió en el campeón más joven de la era híbrida. Su agresividad y ritmo en mojado son únicos.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">30 Sep 1997</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2015</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Poles</div><div class="extra-item-val">40+</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Vueltas rápidas</div><div class="extra-item-val">30+</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">4× Campeón</span>
+          <span class="tag hot">Récord 15 victorias/temporada</span>
+          <span class="tag blue">Mejor en lluvia</span>
+          <span class="tag green">Debut a los 17 años</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEWIS HAMILTON -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-ferrari"></div>
+        <span class="driver-number">44</span>
+        <span class="team-badge badge-ferrari">Ferrari</span>
+        <span class="driver-emoji"><img src="fotos/hamilton.png" style="width: 200px"></span>
+        <span class="driver-code">HAM</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇬🇧</span>
+          <div><div class="card-name">Lewis Hamilton</div><div class="card-team">Scuderia Ferrari</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#44</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">103</div></div>
+          <div class="stat"><div class="stat-label">Títulos</div><div class="stat-value">7</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🏆</span>
+          <div><div class="record-lbl">Récord histórico</div><div class="record-time">103 victorias · 104 poles</div><div class="record-who">El piloto más exitoso de la historia</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇬🇧</span>
+          <div><div class="extra-name">Lewis Hamilton</div><div class="extra-team-name">Scuderia Ferrari HP</div></div>
+        </div>
+        <p class="extra-bio">El piloto más laureado de todos los tiempos. Criado en Stevenage, llegó a la F1 en 2007 y desde entonces no ha parado de romper récords. En 2025 da el salto a Ferrari buscando su octavo título.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">7 Ene 1985</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2007</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Poles</div><div class="extra-item-val">104</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Podios</div><div class="extra-item-val">197</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">7× Campeón Mundial</span>
+          <span class="tag hot">103 victorias (récord)</span>
+          <span class="tag blue">Nuevo en Ferrari 2025</span>
+          <span class="tag green">Activista social</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARLES LECLERC -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-ferrari"></div>
+        <span class="driver-number">16</span>
+        <span class="team-badge badge-ferrari">Ferrari</span>
+        <span class="driver-emoji"><img src="fotos/leclerc.png" style="width: 200px"></span>
+        <span class="driver-code">LEC</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇲🇨</span>
+          <div><div class="card-name">Charles Leclerc</div><div class="card-team">Scuderia Ferrari</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#16</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">8</div></div>
+          <div class="stat"><div class="stat-label">Poles</div><div class="stat-value">25+</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🔴</span>
+          <div><div class="record-lbl">Mejor resultado</div><div class="record-time">2° en el Mundial 2022</div><div class="record-who">El heredero natural de Mónaco</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇲🇨</span>
+          <div><div class="extra-name">Charles Leclerc</div><div class="extra-team-name">Scuderia Ferrari HP</div></div>
+        </div>
+        <p class="extra-bio">El monegasco de Ferrari. Conocido por sus impresionantes poles en clasificación, especialmente en circuitos urbanos. Perdió el título 2022 por errores estratégicos del equipo cuando lideraba el campeonato.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">16 Oct 1997</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2018</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Poles</div><div class="extra-item-val">25+</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Victoria soñada</div><div class="extra-item-val">Mónaco 2024</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag hot">Rey de la clasificación</span>
+          <span class="tag gold">Ganó Mónaco 2024</span>
+          <span class="tag blue">Talento puro</span>
+          <span class="tag green">Pianista aficionado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LANDO NORRIS -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-mclaren"></div>
+        <span class="driver-number">4</span>
+        <span class="team-badge badge-mclaren">McLaren</span>
+        <span class="driver-emoji"><img src="fotos/norris.png" style="width: 200px"></span>
+        <span class="driver-code">NOR</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇬🇧</span>
+          <div><div class="card-name">Lando Norris</div><div class="card-team">McLaren F1 Team</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#4</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">4</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">20+</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🧡</span>
+          <div><div class="record-lbl">Vuelta rápida · Mónaco 2024</div><div class="record-time">1:12.909</div><div class="record-who">2° en el Campeonato 2024</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇬🇧</span>
+          <div><div class="extra-name">Lando Norris</div><div class="extra-team-name">McLaren F1 Team</div></div>
+        </div>
+        <p class="extra-bio">El niño prodigio del paddock ya es una estrella de verdad. Llegó a McLaren en 2019 y desde 2023 lidera la resurrección del equipo papaya. Streamer habitual y uno de los pilotos más queridos por los fans.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">13 Nov 2000</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2019</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">1ª Victoria</div><div class="extra-item-val">Miami 2024</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Mejor posición</div><div class="extra-item-val">2° Mundial 2024</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Subcampeón 2024</span>
+          <span class="tag hot">Piloto más popular</span>
+          <span class="tag blue">Gamer y streamer</span>
+          <span class="tag green">Fiel a McLaren</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARLOS SAINZ -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-williams"></div>
+        <span class="driver-number">55</span>
+        <span class="team-badge badge-williams">Williams</span>
+        <span class="driver-emoji"><img src="fotos/carlos.png" style="width: 200px"></span>
+        <span class="driver-code">SAI</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇪🇸</span>
+          <div><div class="card-name">Carlos Sainz Jr.</div><div class="card-team">Williams Racing</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#55</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">4</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">23+</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🇪🇸</span>
+          <div><div class="record-lbl">Mejor temporada</div><div class="record-time">2° en el Mundial 2023</div><div class="record-who">Victoria en Australia 2024</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇪🇸</span>
+          <div><div class="extra-name">Carlos Sainz Jr.</div><div class="extra-team-name">Williams Racing</div></div>
+        </div>
+        <p class="extra-bio">Hijo del mítico rally Carlos Sainz. Llegó a F1 con el apellido más pesado del motorsport español y lo ha transformado en orgullo propio. Tras 4 años en Ferrari, se une a Williams para demostrar su clase en 2025.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">1 Sep 1994</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2015</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Mejor temporada</div><div class="extra-item-val">2° en 2023</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Equipos</div><div class="extra-item-val">5 equipos F1</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Subcampeón 2023</span>
+          <span class="tag hot">Ganó con apendicitis</span>
+          <span class="tag blue">Nuevo en Williams 2025</span>
+          <span class="tag green">Hijo de leyenda</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GEORGE RUSSELL -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-mercedes"></div>
+        <span class="driver-number">63</span>
+        <span class="team-badge badge-mercedes">Mercedes</span>
+        <span class="driver-emoji"><img src="fotos/rusell.png" style="width: 200px"></span>
+        <span class="driver-code">RUS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇬🇧</span>
+          <div><div class="card-name">George Russell</div><div class="card-team">Mercedes-AMG Petronas</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#63</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">3</div></div>
+          <div class="stat"><div class="stat-label">Poles</div><div class="stat-value">4</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⚡</span>
+          <div><div class="record-lbl">Primera victoria</div><div class="record-time">Brasil 2022</div><div class="record-who">La nueva era de Mercedes</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇬🇧</span>
+          <div><div class="extra-name">George Russell</div><div class="extra-team-name">Mercedes-AMG Petronas F1</div></div>
+        </div>
+        <p class="extra-bio">Llamado "Mr. Saturday" por sus brillantes clasificaciones, Russell llegó a Mercedes en 2022 tras dominar Williams. Inteligente, metódico y representante activo de la GPDA, es el futuro del equipo de la estrella.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">15 Feb 1998</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2019</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Apodo</div><div class="extra-item-val">Mr. Saturday</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Podios</div><div class="extra-item-val">15+</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Campeón F2 2018</span>
+          <span class="tag hot">Líder de la GPDA</span>
+          <span class="tag blue">Patrón de las qualy</span>
+          <span class="tag green">Cara de Mercedes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FERNANDO ALONSO -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-aston"></div>
+        <span class="driver-number">14</span>
+        <span class="team-badge badge-aston">Aston Martin</span>
+        <span class="driver-emoji"><img src="fotos/alonso.png" style="width: 200px"></span>
+        <span class="driver-code">ALO</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇪🇸</span>
+          <div><div class="card-name">Fernando Alonso</div><div class="card-team">Aston Martin Aramco</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#14</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">32</div></div>
+          <div class="stat"><div class="stat-label">Títulos</div><div class="stat-value">2</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🏆</span>
+          <div><div class="record-lbl">Campeón del mundo</div><div class="record-time">2005 · 2006</div><div class="record-who">La leyenda que sigue en pie</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇪🇸</span>
+          <div><div class="extra-name">Fernando Alonso</div><div class="extra-team-name">Aston Martin Aramco F1</div></div>
+        </div>
+        <p class="extra-bio">La leyenda viva de la Fórmula 1. A sus más de 40 años sigue siendo uno de los pilotos más completos de la parrilla. Ha ganado Le Mans, las 500 Millas de Indianápolis y ahora apunta a su tercer título mundial.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">29 Jul 1981</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2001</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">GPs disputados</div><div class="extra-item-val">400+</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Le Mans</div><div class="extra-item-val">Ganador 2018·2019</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">2× Campeón Mundial</span>
+          <span class="tag hot">Triple Corona buscada</span>
+          <span class="tag blue">El más completo</span>
+          <span class="tag green">Más de 400 GPs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OSCAR PIASTRI -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-mclaren"></div>
+        <span class="driver-number">81</span>
+        <span class="team-badge badge-mclaren">McLaren</span>
+        <span class="driver-emoji"><img src="fotos/piastri.png" style="width: 200px"></span>
+        <span class="driver-code">PIA</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇦🇺</span>
+          <div><div class="card-name">Oscar Piastri</div><div class="card-team">McLaren F1 Team</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#81</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">2</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">10+</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🌟</span>
+          <div><div class="record-lbl">Estrella en ascenso</div><div class="record-time">2ª victoria · Hungría 2024</div><div class="record-who">El futuro de McLaren</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇦🇺</span>
+          <div><div class="extra-name">Oscar Piastri</div><div class="extra-team-name">McLaren F1 Team</div></div>
+        </div>
+        <p class="extra-bio">El australiano más prometedor de la F1 moderna. Campeón en F3 y F2 en años consecutivos, llegó a McLaren en 2023 tras el polémico caso Alpine. Frío, preciso y devastador cuando el coche responde.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">6 Apr 2001</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Bahréin 2023</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Campeón F2</div><div class="extra-item-val">2021</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">1ª Victoria</div><div class="extra-item-val">Sprint Qatar 2023</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Campeón F2 & F3</span>
+          <span class="tag hot">Piloto más frío</span>
+          <span class="tag blue">Caso Alpine famoso</span>
+          <span class="tag green">Parrilla desde 2023</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERGIO PÉREZ -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-redbull"></div>
+        <span class="driver-number">11</span>
+        <span class="team-badge badge-redbull">Red Bull</span>
+        <span class="driver-emoji"><img src="fotos/sergio.png" style="width: 200px"></span>
+        <span class="driver-code">PER</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇲🇽</span>
+          <div><div class="card-name">Sergio Pérez</div><div class="card-team">Oracle Red Bull Racing</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#11</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">13</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">38+</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🌮</span>
+          <div><div class="record-lbl">Mejor clasificación</div><div class="record-time">2° en el Mundial 2023</div><div class="record-who">El héroe de México en el paddock</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇲🇽</span>
+          <div><div class="extra-name">Sergio "Checo" Pérez</div><div class="extra-team-name">Oracle Red Bull Racing</div></div>
+        </div>
+        <p class="extra-bio">El orgullo nacional de México en la F1. Conocido por su extraordinaria gestión de neumáticos y su capacidad en calles. Sobrevivió años en equipos medianos antes de llegar a Red Bull y convertirse en doble subcampeón.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">26 Ene 1990</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Bahréin 2011</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Especialidad</div><div class="extra-item-val">Gestión de neumáticos</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">GPs</div><div class="extra-item-val">260+</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">2× Subcampeón</span>
+          <span class="tag hot">Rey de Bakú</span>
+          <span class="tag blue">Maestro de los neumáticos</span>
+          <span class="tag green">Ídolo en México</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LANCE STROLL -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-aston"></div>
+        <span class="driver-number">18</span>
+        <span class="team-badge badge-aston">Aston Martin</span>
+        <span class="driver-emoji"><img src="fotos/stroll.png" style="width: 200px"></span>
+        <span class="driver-code">STR</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇨🇦</span>
+          <div><div class="card-name">Lance Stroll</div><div class="card-team">Aston Martin Aramco</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#18</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">3</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">2017</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🍁</span>
+          <div><div class="record-lbl">Mejor resultado</div><div class="record-time">P2 · Baku 2022</div><div class="record-who">El junior canadiense de la parrilla</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇨🇦</span>
+          <div><div class="extra-name">Lance Stroll</div><div class="extra-team-name">Aston Martin Aramco F1</div></div>
+        </div>
+        <p class="extra-bio">Hijo del multimillonario Lawrence Stroll, propietario de Aston Martin. Más allá del debate sobre su llegada, Lance ha demostrado tener talento real en circuitos callejeros y bajo la lluvia. Piloto en mejora constante.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">29 Oct 1998</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2017</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Pole position</div><div class="extra-item-val">Turquía 2020</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Mejor lluvia</div><div class="extra-item-val">P2 Turquía 2020</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Pole en Turquía 2020</span>
+          <span class="tag hot">Bueno bajo la lluvia</span>
+          <span class="tag blue">Circuitos urbanos</span>
+          <span class="tag green">Desde los 18 años</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- YUKI TSUNODA -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-rb"></div>
+        <span class="driver-number">22</span>
+        <span class="team-badge badge-rb">RB</span>
+        <span class="driver-emoji"><img src="fotos/tsunoda.png" style="width: 200px"></span>
+        <span class="driver-code">TSU</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇯🇵</span>
+          <div><div class="card-name">Yuki Tsunoda</div><div class="card-team">Visa Cash App RB</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#22</div></div>
+          <div class="stat"><div class="stat-label">Puntos</div><div class="stat-value">100+</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">2021</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🇯🇵</span>
+          <div><div class="record-lbl">Mejor posición</div><div class="record-time">P4 · Baku 2021</div><div class="record-who">La voz más potente del paddock</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇯🇵</span>
+          <div><div class="extra-name">Yuki Tsunoda</div><div class="extra-team-name">Visa Cash App RB F1</div></div>
+        </div>
+        <p class="extra-bio">El japonés más rápido de la parrilla. Famoso por sus mensajes de radio explosivos y su pilotaje agresivo. A pesar de su estatura, tiene uno de los perfiles más grandes del paddock en redes sociales. Crece año tras año.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">11 May 2000</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Bahréin 2021</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Conocido por</div><div class="extra-item-val">Radio explosiva</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Equipo</div><div class="extra-item-val">Academia Red Bull</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag hot">Radios legendarios</span>
+          <span class="tag gold">Honda protegido</span>
+          <span class="tag blue">Gran en calificación</span>
+          <span class="tag green">Crece cada año</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTEBAN OCON -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-haas"></div>
+        <span class="driver-number">31</span>
+        <span class="team-badge badge-haas">Haas</span>
+        <span class="driver-emoji"><img src="fotos/ocon.png" style="width: 200px"></span>
+        <span class="driver-code">OCO</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇫🇷</span>
+          <div><div class="card-name">Esteban Ocon</div><div class="card-team">MoneyGram Haas F1 Team</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#31</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">1</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">5</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🏆</span>
+          <div><div class="record-lbl">Única victoria</div><div class="record-time">Hungría 2021</div><div class="record-who">El guerrero francés del paddock</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇫🇷</span>
+          <div><div class="extra-name">Esteban Ocon</div><div class="extra-team-name">MoneyGram Haas F1 Team</div></div>
+        </div>
+        <p class="extra-bio">Criado con pocos recursos, Ocon llegó a la F1 gracias a Mercedes y su talento bruto. Conocido por su rivalidad con Pérez en Force India y con Alonso en Alpine. Llega a Haas en 2025 buscando un nuevo comienzo.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">17 Sep 1996</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Bélgica 2016</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Exequipo</div><div class="extra-item-val">Alpine (2021–2024)</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Rivalidad</div><div class="extra-item-val">vs Alonso</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Victoria Hungría 2021</span>
+          <span class="tag hot">Rival interno explosivo</span>
+          <span class="tag blue">Protegido Mercedes</span>
+          <span class="tag green">Nuevo en Haas 2025</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VALTTERI BOTTAS -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-sauber"></div>
+        <span class="driver-number">77</span>
+        <span class="team-badge badge-sauber">Kick Sauber</span>
+        <span class="driver-emoji"><img src="fotos/bottas.png" style="width: 200px"></span>
+        <span class="driver-code">BOT</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇫🇮</span>
+          <div><div class="card-name">Valtteri Bottas</div><div class="card-team">Stake F1 Team Kick Sauber</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#77</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">10</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">67</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Vuelta rápida histórica</div><div class="record-time">1:10.540 · Interlagos 2018</div><div class="record-who">El maestro de las vueltas rápidas</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇫🇮</span>
+          <div><div class="extra-name">Valtteri Bottas</div><div class="extra-team-name">Stake F1 Kick Sauber</div></div>
+        </div>
+        <p class="extra-bio">El finlandés filosófico de la parrilla. Pasó 5 años como compañero de Hamilton en Mercedes, logrando 10 victorias pero siempre a la sombra. Hoy es el alma de Kick Sauber y un icono de la cultura popular del paddock.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">28 Ago 1989</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2013</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Con Mercedes</div><div class="extra-item-val">2017–2021</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Vueltas rápidas</div><div class="extra-item-val">19 (récord)</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">67 podios en carrera</span>
+          <span class="tag hot">Icono pop del paddock</span>
+          <span class="tag blue">Ciclista profesional</span>
+          <span class="tag green">Récord vueltas rápidas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NICO HÜLKENBERG -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-sauber"></div>
+        <span class="driver-number">27</span>
+        <span class="team-badge badge-sauber">Kick Sauber</span>
+        <span class="driver-emoji"><img src="fotos/hulkenberg.png" style="width: 200px"></span>
+        <span class="driver-code">HUL</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇩🇪</span>
+          <div><div class="card-name">Nico Hülkenberg</div><div class="card-team">Stake F1 Team Kick Sauber</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#27</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">0</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">2010</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">😤</span>
+          <div><div class="record-lbl">Récord curioso</div><div class="record-time">206+ GPs sin podio</div><div class="record-who">El veterano más destacado sin podio</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇩🇪</span>
+          <div><div class="extra-name">Nico Hülkenberg</div><div class="extra-team-name">Stake F1 Kick Sauber</div></div>
+        </div>
+        <p class="extra-bio">Apodado "El Hulk", es el piloto con más Grandes Premios disputados sin un podio en la historia de la F1. Ganó Le Mans en 2015 y es uno de los pilotos con mejor ritmo de un solo intento. Su vuelta al grid en 2023 fue épica.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">19 Ago 1987</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Bahréin 2010</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Le Mans</div><div class="extra-item-val">Ganador 2015</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">GPs sin podio</div><div class="extra-item-val">206+ (récord)</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Ganó Le Mans 2015</span>
+          <span class="tag hot">Récord sin podio</span>
+          <span class="tag blue">Regreso épico 2023</span>
+          <span class="tag green">El Hulk alemán</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIERRE GASLY -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-alpine"></div>
+        <span class="driver-number">10</span>
+        <span class="team-badge badge-alpine">Alpine</span>
+        <span class="driver-emoji"><img src="fotos/gasly.png" style="width: 200px"></span>
+        <span class="driver-code">GAS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇫🇷</span>
+          <div><div class="card-name">Pierre Gasly</div><div class="card-team">BWT Alpine F1 Team</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#10</div></div>
+          <div class="stat"><div class="stat-label">Victorias</div><div class="stat-value">1</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">5</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🏆</span>
+          <div><div class="record-lbl">Victoria sorpresa</div><div class="record-time">Monza 2020 · AlphaTauri</div><div class="record-who">Del abismo a la victoria</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇫🇷</span>
+          <div><div class="extra-name">Pierre Gasly</div><div class="extra-team-name">BWT Alpine F1 Team</div></div>
+        </div>
+        <p class="extra-bio">La historia de resiliencia más bonita del paddock. Degradado de Red Bull en 2019, transformó ese golpe en motivación y ganó en Monza 2020 con AlphaTauri. En 2023 se unió a Alpine buscando dar el siguiente salto.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">7 Feb 1996</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Malasia 2017</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Victoria</div><div class="extra-item-val">Monza 2020</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Degradado Red Bull</div><div class="extra-item-val">Hungría 2019</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Victoria en Monza 2020</span>
+          <span class="tag hot">Regreso más épico</span>
+          <span class="tag blue">Del abismo al podio</span>
+          <span class="tag green">Embajador francés</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KEVIN MAGNUSSEN -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-haas"></div>
+        <span class="driver-number">20</span>
+        <span class="team-badge badge-haas">Haas</span>
+        <span class="driver-emoji"><img src="fotos/magnussen.png" style="width: 200px"></span>
+        <span class="driver-code">MAG</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇩🇰</span>
+          <div><div class="card-name">Kevin Magnussen</div><div class="card-team">MoneyGram Haas F1 Team</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#20</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">1</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">2014</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">💪</span>
+          <div><div class="record-lbl">Debut soñado</div><div class="record-time">P2 · Australia 2014</div><div class="record-who">El guerrero danés de la Fórmula 1</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇩🇰</span>
+          <div><div class="extra-name">Kevin Magnussen</div><div class="extra-team-name">MoneyGram Haas F1 Team</div></div>
+        </div>
+        <p class="extra-bio">Hijo del expiloto Jan Magnussen. Feroz en las batallas cuerpo a cuerpo y sin miedo a nadie en la pista. Volvió a la F1 en 2022 tras una llamada de emergencia de Haas y logró pole position en su GP de regreso en Brasil.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">5 Oct 1992</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2014</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Pole regreso</div><div class="extra-item-val">Brasil 2022</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Padre piloto</div><div class="extra-item-val">Jan Magnussen</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">Pole en su regreso</span>
+          <span class="tag hot">El más combativo</span>
+          <span class="tag blue">Haas desde 2022</span>
+          <span class="tag green">Saga familiar F1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALEXANDER ALBON -->
+    <div class="card">
+      <div class="card-img">
+        <div class="card-img-bg bg-williams"></div>
+        <span class="driver-number">23</span>
+        <span class="team-badge badge-williams">Williams</span>
+        <span class="driver-emoji"><img src="fotos/albon.png" style="width: 200px"></span>
+        <span class="driver-code">ALB</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇹🇭</span>
+          <div><div class="card-name">Alexander Albon</div><div class="card-team">Williams Racing</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Dorsal</div><div class="stat-value">#23</div></div>
+          <div class="stat"><div class="stat-label">Podios</div><div class="stat-value">2</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">2019</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">🏁</span>
+          <div><div class="record-lbl">Regreso triunfal</div><div class="record-time">P3 · Bahréin 2020</div><div class="record-who">Piloto tailandés-británico titular</div></div>
+        </div>
+      </div>
+      <!-- HOVER INFO -->
+      <div class="card-extra">
+        <div class="extra-header">
+          <span class="extra-flag">🇹🇭</span>
+          <div><div class="extra-name">Alexander Albon</div><div class="extra-team-name">Williams Racing</div></div>
+        </div>
+        <p class="extra-bio">Tailandés-británico y orgullo de dos países. Tuvo un paso irregular por Red Bull y fue relegado, pero volvió como líder de Williams en 2022. Considerado uno de los mejores a la hora de sacar el máximo a un coche difícil.</p>
+        <div class="extra-grid">
+          <div class="extra-item"><div class="extra-item-lbl">Nacimiento</div><div class="extra-item-val">23 Mar 1996</div></div>
+          <div class="extra-item"><div class="extra-item-lbl">Debut F1</div><div class="extra-item-val">Australia 2019</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Regreso</div><div class="extra-item-val">Williams 2022</div></div>
+          <div class="extra-item accent"><div class="extra-item-lbl">Podios</div><div class="extra-item-val">2 con Red Bull</div></div>
+        </div>
+        <div class="extra-tags">
+          <span class="tag gold">2 podios con Red Bull</span>
+          <span class="tag hot">Mejor con coche difícil</span>
+          <span class="tag blue">Líder de Williams</span>
+          <span class="tag green">Dos banderas, un corazón</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Historia</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #e8001d;
+    --yellow: #ffd700;
+    --blue: #00aaff;
+    --green: #00c853;
+    --dark: #0a0a0a;
+    --mid: #1a1a1a;
+    --bg-main: linear-gradient(135deg,
+      #c3c7cc 0%,
+      #b5bbc2 25%,
+      #a6adb5 50%,
+      #9aa2ab 75%,
+      #8e979f 100%);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg-main);
+    background-attachment: fixed;
+    color: #111;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── NAV (exacto al HTML original) ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 100px;
+    border-bottom: 1px solid #222;
+  }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: currentColor;
+    transition: width 0.25s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a:hover { opacity: 0.8; }
+  .nav-links a.red   { color: var(--red); }
+  .nav-links a.white { color: #fff; }
+  .nav-links a.green { color: var(--green); }
+  .nav-links a.blue  { color: var(--blue); }
+  .nav-links a.pink  { color: #ff6ec7; }
+  .nav-links a.orange  { color: #ff7801; }
+
+  .nav-item { position: relative; display: inline-block; }
+  .dropdown {
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+  }
+  .dropdown a {
+    color: var(--blue);
+    text-decoration: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    transition: color 0.2s;
+  }
+  .dropdown a:hover { color: #fff; }
+  .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+  .dropdown-fia a { color: var(--green); }
+  .dropdown-fia a:hover { color: #fff; }
+
+  .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+  .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+  .nav-right a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: underline;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 3rem 2rem;
+  }
+
+  .hero-text {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .hero-text h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #111;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .hero-text p {
+    font-size: 0.9rem;
+    color: #333;
+    margin-top: 0.5rem;
+    letter-spacing: 0.05em;
+    font-weight: 300;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CONTENT ── */
+  .content-section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+    position: relative; /* needed for the circle image */
+  }
+
+  /* Imagen circular de fondo centrada en medio del contenido */
+  .hero-bg-circle {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0.25;
+    filter: grayscale(20%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Párrafos estilo imagen: mayúsculas, condensed, justificado */
+  .historia-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .historia-text p {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: justify;
+    color: #111;
+    line-height: 1.7;
+    margin-bottom: 1.1rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-links">
+    <a href="mini-historia.html" class="red">Mini Historia</a>
+    <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+    <div class="nav-item">
+      <a href="#" class="green">FIA</a>
+      <div class="dropdown dropdown-fia">
+        <a href="definicion-fia.html">Definición FIA</a>
+        <a href="ruedas.html">Ruedas</a>
+        <a href="reglamento.html">Reglamento</a>
+        <a href="estrategia.html">Estrategia</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#" class="blue">Equipos</a>
+      <div class="dropdown">
+        <a href="pilotos.html">Pilotos</a>
+        <a href="escuderias.html">Escuderías</a>
+        <a href="circuitos.html">Circuitos</a>
+      </div>
+    </div>
+    <a href="comentaristas.html" class="pink">Comentaristas</a>
+    <a href="fan-zone.html" class="orange">Fan Zone</a>
+  </div>
+  <div class="nav-right">
+    <a href="index.html">Diccionario de F1</a>
+    <img src="fotos/logo.png" alt="Logo F1">
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <!-- CAMBIO 1: nuevo icono 🏁 en lugar de 🏎️ -->
+    <h1>🏁 Mini Historia</h1>
+    <p>Historia breve de la Formula 1</p>
+  </div>
+</section>
+
+<!-- CONTENIDO -->
+<section class="content-section">
+
+  <!-- CAMBIO 2: imagen circular ahora en content-section, posición media (top:50%) -->
+  <img class="hero-bg-circle" src="fotos/cascos.png" alt="">
+
+  <div class="historia-text">
+
+    <p class="highlight">La Fórmula 1 nació en 1950 como el Campeonato Mundial de Pilotos organizado por la FIA (la Federación Internacional del Automóvil). Su primera carrera se corrió en Silverstone - Reino Unido. En sus primeras décadas, fue un deporte elitista y peligroso, con pocos estándares de seguridad y una tecnología todavía rudimentaria.</p>
+
+    <p>Durante los años 50, dominaban escuderías europeas como Alfa Romeo, Ferrari y Maserati, con el argentino Juan Manuel Fangio como figura principal, logrando cinco títulos. En los 60, el enfoque se trasladó al diseño y la ingeniería, con el motor trasero revolucionando el deporte.</p>
+
+    <p>Los años 70 fueron una etapa de glamour, rivalidades y creciente popularidad. Niki Lauda y James Hunt protagonizaron una de las batallas más recordadas. El deporte comenzó a atraer patrocinadores y televisión, profesionalizando aún más.</p>
+
+    <p>En los años 80, la tecnología y los motores turbo dominaron. Nació la legendaria rivalidad entre Ayrton Senna y Alain Prost, especialmente durante su paso por McLaren-Honda. Las velocidades extremas aumentaron, pero también la cantidad de accidentes graves.</p>
+
+    <p>La muerte de Senna en 1994, junto a la de Ratzenberger, marcó un punto de inflexión en la seguridad del deporte. Surgió entonces un nuevo dominador: Michael Schumacher, quien con Ferrari logró un dominio histórico entre 2000 y 2004.</p>
+
+    <p>Los años 2000 consolidaron la F1 como un espectáculo global. Se expandió a Asia y Medio Oriente. En 2005 y 2006, Fernando Alonso rompió el dominio de Schumacher. Luego, Lewis Hamilton empezó su camino hacia convertirse en uno de los grandes.</p>
+
+    <p>En 2021, comenzó una nueva era con la coronación de Max Verstappen tras una de las temporadas más emocionantes. Con el cambio reglamentario de 2022, Red Bull se convirtió en la fuerza dominante. Verstappen ganó los títulos de 2022, 2023 y 2024, marcando el inicio de una nueva dinastía.</p>
+
+    <p>La F1 actual en 2025 es altamente tecnológica, global, cada vez más sostenible y más competitiva que nunca.</p>
+
+  </div>
+  
+  <img class="image-f1"src="fotos/f1.jpg" alt="F1" style="width:200px; border-radius:5%; display:block; margin:0 auto;">
+</section>
+
+
+</body>
+</html>

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruedas</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        :root {
+            --red:    #e8001d;
+            --yellow: #ffd700;
+            --blue:   #00aaff;
+            --green:  #00c853;
+            --dark:   #0a0a0a;
+            --mid:    #1a1a1a;
+
+            --soft:   #ff6b35;   /* color acento para ruedas */
+
+            --bg-main: linear-gradient(135deg,
+                #c3c7cc 0%, #b5bbc2 25%, #a6adb5 50%,
+                #9aa2ab 75%, #8e979f 100%);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background: var(--bg-main);
+            color: #111;
+            overflow-x: hidden;
+        }
+
+        /* ───── NAV ───── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: #0d0d0d;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2.5rem; height: 100px;
+            border-bottom: 1px solid #222;
+        }
+
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+
+        .nav-links a {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700; font-size: 0.85rem;
+            letter-spacing: 0.08em; text-decoration: none;
+            text-transform: uppercase; position: relative; transition: opacity 0.2s;
+        }
+
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px; background: currentColor;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { opacity: 0.8; }
+
+        .nav-links a.red    { color: var(--red); }
+        .nav-links a.white  { color: #fff; }
+        .nav-links a.green  { color: var(--green); }
+        .nav-links a.blue   { color: var(--blue); }
+        .nav-links a.pink   { color: #ff6ec7; }
+        .nav-links a.orange { color: #ff7801; }
+
+        .nav-item { position: relative; display: inline-block; }
+
+        .dropdown {
+            position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%);
+            background: #111; padding: 1rem 2rem;
+            display: flex; flex-direction: column; gap: 0.8rem;
+            opacity: 0; visibility: hidden; transition: 0.3s ease;
+        }
+
+        .dropdown a {
+            color: var(--blue); text-decoration: none;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 600; letter-spacing: 0.08em;
+            text-transform: uppercase; font-size: 0.8rem; transition: color 0.2s;
+        }
+
+        .dropdown a:hover { color: #fff; }
+        .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+        .dropdown-fia a { color: var(--green); }
+        .dropdown-fia a:hover { color: #fff; }
+
+        .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+        .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+        .nav-right a {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700; font-size: 0.8rem;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: #fff; text-decoration: underline;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+
+        /* ───── HERO ───── */
+        .hero {
+            background: var(--bg-main); height: 320px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: repeating-linear-gradient(90deg,
+                rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+                transparent 1px, transparent 4px);
+            opacity: 0.4;
+        }
+
+        .hero-accent {
+            position: absolute; left: 0; top: 0;
+            width: 8px; height: 100%;
+            background: var(--soft);
+        }
+
+        .hero h1 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900; font-size: clamp(2.4rem, 6vw, 4rem);
+            letter-spacing: 0.05em; text-transform: uppercase;
+            position: relative; animation: fadeUp 0.8s ease both; color: #111;
+        }
+
+        .hero h1 span { color: var(--soft); }
+
+        .hero p {
+            font-size: 1rem; margin-top: 0.75rem;
+            font-weight: 300; letter-spacing: 0.04em;
+            position: relative; animation: fadeUp 0.8s 0.15s ease both; color: #333;
+        }
+
+        .hero-badge {
+            position: relative; margin-bottom: 1rem;
+            animation: fadeUp 0.8s 0.05s ease both;
+        }
+
+        .hero-badge span {
+            background: var(--soft); color: #fff;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700; font-size: 0.7rem;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            padding: 0.3rem 0.8rem; border-radius: 2px;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ───── INTRO STRIP ───── */
+        .intro-strip {
+            background: #0d0d0d; padding: 2rem 2.5rem;
+            display: flex; align-items: center; gap: 3rem;
+            border-top: 3px solid var(--soft);
+        }
+
+        .intro-strip .stat { display: flex; flex-direction: column; align-items: center; min-width: 120px; }
+        .intro-strip .stat-num {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900; font-size: 2.8rem; color: var(--soft); line-height: 1;
+        }
+        .intro-strip .stat-label {
+            font-size: 0.72rem; letter-spacing: 0.1em;
+            text-transform: uppercase; color: rgba(255,255,255,0.5);
+            margin-top: 0.3rem; text-align: center;
+        }
+        .intro-strip .divider { width: 1px; height: 60px; background: rgba(255,255,255,0.1); }
+        .intro-strip .intro-text {
+            color: rgba(255,255,255,0.7); font-size: 0.95rem;
+            font-weight: 300; line-height: 1.7; max-width: 700px;
+        }
+        .intro-strip .intro-text strong { color: #fff; font-weight: 600; }
+
+        /* ───── COMPOUNDS ───── */
+        .compounds-section {
+            background: var(--bg-main); padding: 3.5rem 2rem;
+        }
+        .compounds-inner { max-width: 1200px; margin: 0 auto; }
+
+        .section-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700; font-size: 0.72rem;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--soft); margin-bottom: 0.6rem;
+        }
+        .section-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900; font-size: clamp(1.8rem, 3vw, 2.8rem);
+            letter-spacing: 0.05em; text-transform: uppercase;
+            color: #111; margin-bottom: 2rem;
+        }
+
+        .compounds-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+        }
+
+        .compound-card {
+            border-radius: 10px; overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: default;
+        }
+
+        .compound-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .compound-top {
+            height: 110px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+
+        .compound-top .circle {
+            width: 70px; height: 70px; border-radius: 50%;
+            border: 5px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .compound-top .circle span {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900; font-size: 1.6rem; color: #fff;
+        }
+
+        .compound-body {
+            background: #0d0d0d; padding: 1rem;
+        }
+
+        .compound-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900; font-size: 1rem;
+            letter-spacing: 0.08em; text-transform: uppercase; color: #fff;
+            margin-bottom: 0.4rem;
+        }
+
+        .compound-desc {
+            font-size: 0.8rem; color: rgba(255,255,255,0.5); line-height: 1.55;
+        }
+
+        /* colores compuestos */
+        .c1 .compound-top { background: linear-gradient(135deg,#cc0000,#ff1a1a); }
+        .c2 .compound-top { background: linear-gradient(135deg,#e85000,#ff7a00); }
+        .c3 .compound-top { background: linear-gradient(135deg,#e8c000,#ffd700); }
+        .c4 .compound-top { background: linear-gradient(135deg,#159800,#00c853); }
+        .c5 .compound-top { background: linear-gradient(135deg,#222,#444); }
+
+        /* ───── ESTRUCTURA ───── */
+        .structure-section {
+            background: #0d0d0d; padding: 3.5rem 2rem;
+        }
+        .structure-inner { max-width: 1200px; margin: 0 auto; }
+        .structure-inner .section-label { color: var(--soft); }
+        .structure-inner .section-title { color: #fff; }
+
+        .structure-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        .structure-text p {
+            font-size: 0.95rem; line-height: 1.8;
+            color: rgba(255,255,255,0.65); margin-bottom: 1rem;
+        }
+        .structure-text p:last-child { margin-bottom: 0; }
+        .structure-text strong { color: #fff; font-weight: 600; }
+
+        /* capas del neumático */
+        .tyre-layers {
+            background: #141414;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .layer-row {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+        .layer-row:last-child { border-bottom: none; }
+        .layer-row:hover { background: #1c1c1c; }
+
+        .layer-dot {
+            width: 12px; height: 12px; border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .layer-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700; font-size: 0.9rem;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: #fff; min-width: 120px;
+        }
+
+        .layer-desc {
+            font-size: 0.82rem; color: rgba(255,255,255,0.45); line-height: 1.45;
+        }
+
+        /* ───── ESTRATEGIA ───── */
+        .strategy-section {
+            background: var(--bg-main); padding: 3.5rem 2rem;
+        }
+        .strategy-inner { max-width: 1200px; margin: 0 auto; }
+
+        .strategy-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .strat-card {
+            background: #fff; border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .strat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 36px rgba(0,0,0,0.2);
+        }
+
+        .strat-top {
+            background: #111; padding: 1rem 1.3rem;
+            display: flex; align-items: center; gap: 0.8rem;
+        }
+
+        .strat-num {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900; font-size: 2.2rem;
+            color: var(--soft); line-height: 1;
+        }
+
+        .strat-top-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700; font-size: 0.85rem;
+            letter-spacing: 0.08em; text-transform: uppercase; color: #fff;
+        }
+
+        .strat-body { padding: 1rem 1.3rem; }
+
+        .strat-body p {
+            font-size: 0.88rem; line-height: 1.65; color: #333;
+        }
+
+        /* ───── CURIOSIDADES ───── */
+        .facts-section {
+            background: #0d0d0d;
+            padding: 3rem 2rem;
+            border-top: 3px solid var(--soft);
+            border-bottom: 3px solid var(--soft);
+        }
+        .facts-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .fact-box { text-align: center; padding: 1.5rem 1rem; }
+
+        .fact-box .fact-number {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900; font-size: 2.6rem;
+            color: var(--soft); line-height: 1;
+        }
+        .fact-box .fact-unit {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1rem; color: rgba(255,255,255,0.4);
+            display: block; letter-spacing: 0.08em;
+            text-transform: uppercase; margin-top: 0.2rem;
+        }
+        .fact-box .fact-label {
+            font-size: 0.82rem; color: rgba(255,255,255,0.45);
+            margin-top: 0.6rem; line-height: 1.5;
+        }
+
+        /* ───── FOOTER ───── */
+        footer {
+            background: #0a0a0a; border-top: 1px solid #1a1a1a;
+            padding: 2rem 2.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .footer-left {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700; font-size: 0.75rem;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: rgba(255,255,255,0.25);
+        }
+
+        .footer-links { display: flex; gap: 1.5rem; }
+
+        .footer-links a {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 600; font-size: 0.72rem;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--soft); }
+
+        /* ───── SCROLLBAR ───── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--soft); }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══ NAV ═══ -->
+    <nav>
+        <div class="nav-links">
+            <a href="mini-historia.html" class="red">Mini Historia</a>
+            <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+            <div class="nav-item">
+                <a href="#" class="green">FIA</a>
+                <div class="dropdown dropdown-fia">
+                    <a href="definicion-fia.html">Definición FIA</a>
+                    <a href="ruedas.html">Ruedas</a>
+                    <a href="reglamento.html">Reglamento</a>
+                    <a href="estrategia.html">Estrategia</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="blue">Equipos</a>
+                <div class="dropdown">
+                    <a href="pilotos.html">Pilotos</a>
+                    <a href="escuderias.html">Escuderías</a>
+                    <a href="circuitos.html">Circuitos</a>
+                </div>
+            </div>
+            <a href="comentaristas.html" class="pink">Comentaristas</a>
+            <a href="fan-zone.html" class="orange">Fan Zone</a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html">Diccionario de F1</a>
+            <img src="fotos/logo.png" alt="Logo F1">
+        </div>
+    </nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>🛞Ruedas</h1>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tipos de ruedas en la F1</p>
+  </div>
+</section>
+    <!-- ═══ INTRO STRIP ═══ -->
+    <div class="intro-strip">
+        <div class="stat" style="margin-left: 200px;">
+            <span class="stat-num">18"</span>
+            <span class="stat-label">Diámetro<br>desde 2022</span>
+        </div>
+        <div class="divider"></div>
+        <div class="stat">
+            <span class="stat-num">13</span>
+            <span class="stat-label">Sets por<br>fin de semana</span>
+        </div>
+        <div class="divider"></div>
+        <div class="stat">
+            <span class="stat-num">5</span>
+            <span class="stat-label">Compuestos<br>disponibles</span>
+        </div>
+        <div class="divider"></div>
+        <p class="intro-text">
+            Los neumáticos son el único punto de contacto entre el monoplaza y el asfalto. 
+            <strong>Pirelli</strong>, proveedor exclusivo de la F1 desde 2011, fabrica gomas que deben 
+            soportar temperaturas superiores a <strong>120 °C</strong>, fuerzas G de hasta 6g en frenada 
+            y velocidades por encima de los <strong>350 km/h</strong>. Elegir el compuesto correcto 
+            puede decidir quién gana o pierde una carrera.
+        </p>
+    </div>
+
+    <!-- ═══ COMPUESTOS ═══ -->
+    <section class="compounds-section">
+        <div class="compounds-inner">
+            <div class="section-label">Tipos de neumático</div>
+            <h2 class="section-title">Los 5 compuestos de slick</h2>
+
+            <div class="compounds-grid">
+                <div class="compound-card c1">
+                    <div class="compound-top">
+                        <div class="circle"><span>C1</span></div>
+                    </div>
+                    <div class="compound-body">
+                        <div class="compound-name">Más duro</div>
+                        <p class="compound-desc">Mayor duración. Se usa en circuitos de alto desgaste como Silverstone o Spa.</p>
+                    </div>
+                </div>
+                <div class="compound-card c2">
+                    <div class="compound-top">
+                        <div class="circle"><span>C2</span></div>
+                    </div>
+                    <div class="compound-body">
+                        <div class="compound-name">Duro</div>
+                        <p class="compound-desc">Equilibrio entre vida útil y rendimiento. Habitual como opción "Medium" en muchos GP.</p>
+                    </div>
+                </div>
+                <div class="compound-card c3">
+                    <div class="compound-top">
+                        <div class="circle"><span>C3</span></div>
+                    </div>
+                    <div class="compound-body">
+                        <div class="compound-name">Medio</div>
+                        <p class="compound-desc">El compuesto intermedio por excelencia. Referencia para la mayor parte de la parrilla.</p>
+                    </div>
+                </div>
+                <div class="compound-card c4">
+                    <div class="compound-top">
+                        <div class="circle"><span>C4</span></div>
+                    </div>
+                    <div class="compound-body">
+                        <div class="compound-name">Blando</div>
+                        <p class="compound-desc">Alta adherencia y calentamiento rápido. Clave en clasificación, pero se degrada rápido.</p>
+                    </div>
+                </div>
+                <div class="compound-card c5">
+                    <div class="compound-top">
+                        <div class="circle"><span>C5</span></div>
+                    </div>
+                    <div class="compound-body">
+                        <div class="compound-name">Más blando</div>
+                        <p class="compound-desc">Máximo agarre en circuitos lentos y técnicos. Vida útil muy reducida en carrera.</p>
+                    </div>
+                </div>
+            </div>
+
+            <p style="margin-top:1.4rem; font-size:0.85rem; color:#444; font-style:italic;">
+                * Pirelli selecciona tres de estos cinco compuestos para cada Gran Premio: se nombran
+                localmente como <strong>Duro (blanco)</strong>, <strong>Medio (amarillo)</strong> y <strong>Blando (rojo)</strong>.
+                También existen neumáticos de <strong>Intermedio (verde)</strong> y <strong>Lluvia (azul)</strong> para condiciones húmedas.
+            </p>
+        </div>
+    </section>
+
+    <!-- ═══ ESTRUCTURA ═══ -->
+    <section class="structure-section">
+        <div class="structure-inner">
+            <div class="section-label">Anatomía</div>
+            <h2 class="section-title">¿Cómo está construido un neumático de F1?</h2>
+
+            <div class="structure-layout">
+                <div class="structure-text">
+                    <p>
+                        Un neumático de F1 es mucho más que goma. Está compuesto por más de 
+                        <strong>100 materiales distintos</strong>, incluyendo fibras de acero, 
+                        kevlar, nylon y cauchos especiales de alta especificación. Su diseño 
+                        busca maximizar el agarre mecánico al mismo tiempo que se controla 
+                        la degradación térmica.
+                    </p>
+                    <p>
+                        La <strong>ventana de temperatura</strong> operativa es crítica: si el neumático está 
+                        demasiado frío no genera grip; si supera su límite térmico, la goma 
+                        se granulea y el rendimiento cae en picado. Los ingenieros trabajan 
+                        constantemente para mantener los neumáticos dentro de esa franja óptima.
+                    </p>
+                    <p>
+                        Desde 2022, la F1 pasó de llantas de <strong>13 pulgadas a 18 pulgadas</strong>, 
+                        con neumáticos de perfil bajo. Esto redujo el "efecto globo" y trasladó 
+                        más trabajo de absorción de impactos a las suspensiones.
+                    </p>
+                </div>
+
+                <div class="tyre-layers">
+                    <div class="layer-row">
+                        <div class="layer-dot" style="background:#e8001d"></div>
+                        <div class="layer-name">Banda de rodadura</div>
+                        <div class="layer-desc">Goma de contacto con el asfalto. Define el compuesto.</div>
+                    </div>
+                    <div class="layer-row">
+                        <div class="layer-dot" style="background:#ff7801"></div>
+                        <div class="layer-name">Subbase</div>
+                        <div class="layer-desc">Regula la transferencia de calor y da forma al neumático.</div>
+                    </div>
+                    <div class="layer-row">
+                        <div class="layer-dot" style="background:#ffd700"></div>
+                        <div class="layer-name">Cinturón de acero</div>
+                        <div class="layer-desc">Estabiliza la banda frente a las fuerzas centrífugas.</div>
+                    </div>
+                    <div class="layer-row">
+                        <div class="layer-dot" style="background:#00c853"></div>
+                        <div class="layer-name">Carcasa de nylon</div>
+                        <div class="layer-desc">Estructura interna principal. Soporta la carga lateral.</div>
+                    </div>
+                    <div class="layer-row">
+                        <div class="layer-dot" style="background:#00aaff"></div>
+                        <div class="layer-name">Flancos</div>
+                        <div class="layer-desc">Paredes laterales que soportan la presión y los impactos.</div>
+                    </div>
+                    <div class="layer-row">
+                        <div class="layer-dot" style="background:#888"></div>
+                        <div class="layer-name">Talón</div>
+                        <div class="layer-desc">Fija el neumático a la llanta con alambre de acero de alta resistencia.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

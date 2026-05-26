@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrategia en F1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --red: #e8001d; --yellow: #ffd700; --blue: #00aaff;
+            --green: #00c853; --dark: #0a0a0a; --mid: #1a1a1a;
+            --bg-main: linear-gradient(135deg, #c3c7cc 0%, #b5bbc2 25%, #a6adb5 50%, #9aa2ab 75%, #8e979f 100%);
+            --accent: var(--red);
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Barlow', sans-serif; background: var(--bg-main); color: #111; overflow-x: hidden; }
+
+        /* NAV */
+        nav {
+            position: sticky; top: 0; z-index: 100; background: #0d0d0d;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2.5rem; height: 100px; border-bottom: 1px solid #222;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.85rem; letter-spacing: 0.08em; text-decoration: none;
+            text-transform: uppercase; position: relative; transition: opacity 0.2s;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px; background: currentColor; transition: width 0.25s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.red    { color: var(--red); }
+        .nav-links a.white  { color: #fff; }
+        .nav-links a.green  { color: var(--green); }
+        .nav-links a.blue   { color: var(--blue); }
+        .nav-links a.pink   { color: #ff6ec7; }
+        .nav-links a.orange { color: #ff7801; }
+        .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+        .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+        .nav-right a {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+            color: #fff; text-decoration: underline; display: flex; align-items: center; gap: 0.4rem;
+        }
+        .nav-item { position: relative; display: inline-block; }
+        .dropdown {
+            position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            background: #111; padding: 1rem 2rem; display: flex; flex-direction: column;
+            gap: 0.8rem; opacity: 0; visibility: hidden; transition: 0.3s ease;
+        }
+        .dropdown a {
+            color: var(--blue); text-decoration: none;
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.8rem; transition: color 0.2s;
+        }
+        .dropdown a:hover { color: #fff; }
+        .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+        .dropdown-fia a { color: var(--green); }
+        .dropdown-fia a:hover { color: #fff; }
+
+        /* HERO */
+        .hero {
+            background: var(--bg-main); height: 320px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: repeating-linear-gradient(90deg,
+                rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+                transparent 1px, transparent 4px);
+            opacity: 0.4;
+        }
+        .hero-badge {
+            font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.2em; text-transform: uppercase; color: var(--red);
+            border: 1.5px solid var(--red); padding: 0.3rem 1rem; border-radius: 2px;
+            margin-bottom: 1rem; position: relative; animation: fadeUp 0.6s ease both;
+        }
+        .hero h1 {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+            font-size: clamp(2.2rem, 6vw, 4rem); letter-spacing: 0.05em; text-transform: uppercase;
+            position: relative; animation: fadeUp 0.8s 0.1s ease both; color: #0a0a0a;
+        }
+        .hero h1 span { color: var(--red); }
+        .hero p {
+            font-size: 1rem; margin-top: 0.75rem; font-weight: 300;
+            letter-spacing: 0.04em; position: relative;
+            animation: fadeUp 0.8s 0.2s ease both; color: #2a2a2a;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SECTIONS */
+        .section-dark  { background: #0d0d0d; padding: 4rem 2rem; }
+        .section-light { background: var(--bg-main); padding: 4rem 2rem; }
+        .inner { max-width: 1200px; margin: 0 auto; }
+        .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem; }
+        .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(1.6rem, 3vw, 2.4rem); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1.5rem; color: #fff; }
+        .section-title-dark { color: #0d0d0d; }
+
+        /* INTRO */
+        .intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+        .intro-text p { font-size: 1rem; line-height: 1.8; color: #d0d0d0; margin-bottom: 1rem; }
+        .intro-text p:last-child { margin-bottom: 0; }
+        .intro-text strong { color: var(--red); font-weight: 600; }
+        .intro-visual {
+            background: #111; border: 1px solid #1e1e1e; border-radius: 8px;
+            padding: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem;
+        }
+        .stat-row { display: flex; align-items: center; gap: 1.5rem; border-bottom: 1px solid #1e1e1e; padding-bottom: 1.2rem; }
+        .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .stat-num { font-family: 'Barlow Condensed', sans-serif; font-size: 2.8rem; font-weight: 900; color: var(--red); line-height: 1; min-width: 90px; }
+        .stat-desc { font-size: 0.85rem; line-height: 1.5; color: #999; }
+        .stat-desc strong { display: block; color: #fff; font-size: 0.95rem; margin-bottom: 0.2rem; }
+
+        /* PILLARS / ESTRATEGIAS */
+        .pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+        .pillar-card {
+            background: #fff; border-radius: 8px; padding: 2rem 1.5rem;
+            position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .pillar-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 4px; height: 100%; background: var(--accent, var(--red));
+        }
+        .pillar-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .pillar-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .pillar-card h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.6rem; color: #0d0d0d; }
+        .pillar-card p { font-size: 0.88rem; line-height: 1.7; color: #555; }
+
+        /* ROLES TABLE */
+        .roles-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); margin-top: 2rem; }
+        .roles-table thead { background: #0d0d0d; color: #fff; }
+        .roles-table th, .roles-table td { padding: 0.85rem 1.2rem; text-align: left; font-size: 0.9rem; }
+        .roles-table th { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.82rem; }
+        .roles-table tbody tr:nth-child(even) { background: #f4f7fa; }
+        .roles-table tbody tr { transition: background 0.2s; }
+        .roles-table tbody tr:hover { background: #fff3f3; }
+        .role-tag { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 3px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+        .tag-green  { background: #e8f5e9; color: #2e7d32; }
+        .tag-red    { background: #ffebee; color: #c62828; }
+        .tag-blue   { background: #e3f2fd; color: #1565c0; }
+        .tag-yellow { background: #fffde7; color: #f57f17; }
+        .tag-orange { background: #fff3e0; color: #e65100; }
+
+        /* TIMELINE (neumática) */
+        .timeline { position: relative; margin-top: 2.5rem; padding-left: 2rem; }
+        .timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(to bottom, var(--red), #0d0d0d); }
+        .timeline-item { position: relative; margin-bottom: 2.5rem; padding-left: 2rem; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-dot { position: absolute; left: -2.5rem; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--red); border: 2px solid #0d0d0d; box-shadow: 0 0 0 3px var(--red); }
+        .timeline-year { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--red); letter-spacing: 0.04em; margin-bottom: 0.3rem; }
+        .timeline-item h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; margin-bottom: 0.4rem; }
+        .timeline-item p { font-size: 0.88rem; line-height: 1.7; color: #888; }
+
+        /* ORG GRID */
+        .org-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        .org-card { background: #111; border-radius: 8px; padding: 2rem; border: 1px solid #1e1e1e; transition: border-color 0.3s; }
+        .org-card:hover { border-color: var(--red); }
+        .org-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; padding-bottom: 1rem; border-bottom: 1px solid #1e1e1e; }
+        .org-icon { width: 42px; height: 42px; border-radius: 6px; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .org-card h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: 0.07em; text-transform: uppercase; color: #fff; }
+        .org-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+        .org-card li { font-size: 0.88rem; color: #999; padding-left: 1rem; position: relative; line-height: 1.5; }
+        .org-card li::before { content: '›'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+        /* QUOTE */
+        .quote-banner { background: #0d0d0d; border-left: 4px solid var(--red); padding: 2rem 2.5rem; border-radius: 0 8px 8px 0; margin-top: 3rem; }
+        .quote-banner blockquote { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 1.4rem; color: #fff; letter-spacing: 0.03em; line-height: 1.4; margin-bottom: 0.75rem; }
+        .quote-banner cite { font-size: 0.82rem; color: var(--red); letter-spacing: 0.1em; text-transform: uppercase; font-style: normal; }
+
+        /* NEUMÁTICOS BADGE */
+        .tyre-badge {
+            display: inline-block;
+            width: 18px; height: 18px; border-radius: 50%;
+            border: 3px solid #222; margin-right: 6px; vertical-align: middle;
+        }
+        .tyre-soft   { background: var(--red); }
+        .tyre-medium { background: var(--yellow); }
+        .tyre-hard   { background: #fff; border-color: #999; }
+        .tyre-inter  { background: var(--green); }
+        .tyre-wet    { background: var(--blue); }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+        @media (max-width: 900px) {
+            .intro-grid, .org-grid { grid-template-columns: 1fr; }
+            .pillars-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .pillars-grid { grid-template-columns: 1fr; }
+            nav { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-links">
+            <a href="mini-historia.html" class="red">Mini Historia</a>
+            <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+            <div class="nav-item">
+                <a href="#" class="green">FIA</a>
+                <div class="dropdown dropdown-fia">
+                    <a href="definicion-fia.html">Definición FIA</a>
+                    <a href="ruedas.html">Ruedas</a>
+                    <a href="reglamento.html">Reglamento</a>
+                    <a href="estrategia.html">Estrategia</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="blue">Equipos</a>
+                <div class="dropdown">
+                    <a href="pilotos.html">Pilotos</a>
+                    <a href="escuderias.html">Escuderías</a>
+                    <a href="circuitos.html">Circuitos</a>
+                </div>
+            </div>
+            <a href="comentaristas.html" class="pink">Comentaristas</a>
+            <a href="fan-zone.html" class="orange">Fan Zone</a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html">Diccionario de F1</a>
+            <img src="fotos/logo.png" alt="Logo F1">
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1>Estrategia</h1>
+        <p>El ajedrez a 300 km/h — donde se ganan y se pierden las carreras</p>
+    </section>
+
+    <!-- DEFINICIÓN + STATS -->
+    <section class="section-dark">
+        <div class="inner">
+            <div class="intro-grid">
+                <div class="intro-text">
+                    <div class="section-label">¿Qué es la estrategia?</div>
+                    <h2 class="section-title">Mucho más que una parada en boxes</h2>
+                    <p>La <strong>estrategia en Fórmula 1</strong> es el conjunto de decisiones que toma un equipo durante el fin de semana de carrera para maximizar el resultado final. Abarca desde la elección de neumáticos en la parrilla hasta la gestión del ritmo en pista, los tiempos de entrada a boxes y las respuestas a los coches de seguridad.</p>
+                    <p>Un equipo de F1 emplea a decenas de <strong>ingenieros de estrategia</strong> que analizan en tiempo real miles de variables: degradación de gomas, consumo de combustible, tráfico en pista, condiciones meteorológicas y los movimientos del rival.</p>
+                    <p>Una sola decisión estratégica puede transformar una victoria en un podio perdido — o convertir el décimo lugar en un triunfo inesperado. La estrategia es, en muchos casos, <strong>la diferencia entre ganar y perder</strong>.</p>
+                </div>
+                <div class="intro-visual">
+                    <div class="stat-row">
+                        <div class="stat-num">~20</div>
+                        <div class="stat-desc"><strong>Segundos en boxes</strong>Una parada rápida puede durar tan solo 1,8 s; la media ronda los 2,5 s.</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-num">5</div>
+                        <div class="stat-desc"><strong>Compuestos disponibles</strong>Pirelli lleva a cada carrera hasta 5 tipos de neumático diferentes.</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-num">3</div>
+                        <div class="stat-desc"><strong>Paradas típicas</strong>Algunas carreras exigen hasta 3 pit stops; otras se resuelven con 1 sola parada.</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-num">∞</div>
+                        <div class="stat-desc"><strong>Variables en juego</strong>Lluvia, safety car, VSC, accidentes… cada carrera es un escenario único.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TIPOS DE ESTRATEGIA -->
+    <section class="section-light">
+        <div class="inner">
+            <div class="section-label" style="color:#b00018;">Tácticas principales</div>
+            <h2 class="section-title section-title-dark">Los grandes tipos de estrategia</h2>
+            <div class="pillars-grid">
+                <div class="pillar-card" style="--accent: var(--red);">
+                    <div class="pillar-icon">1️⃣</div>
+                    <h3>Una Parada</h3>
+                    <p>El equipo intenta completar la carrera con una sola parada en boxes. Requiere gestionar con cuidado la degradación de los neumáticos y suele apostar por gomas más duras que aguanten más vueltas.</p>
+                </div>
+                <div class="pillar-card" style="--accent: var(--yellow);">
+                    <div class="pillar-icon">2️⃣</div>
+                    <h3>Dos Paradas</h3>
+                    <p>La estrategia más habitual en circuitos de alta degradación. Permite usar compuestos más blandos y atacar en cada stint, sacrificando algo de tiempo en boxes a cambio de mayor ritmo por vuelta.</p>
+                </div>
+                <div class="pillar-card" style="--accent: var(--blue);">
+                    <div class="pillar-icon">⚡</div>
+                    <h3>Undercut / Overcut</h3>
+                    <p>El <em>undercut</em> consiste en entrar antes que el rival para salir con neumáticos más frescos y atacarle. El <em>overcut</em> hace lo opuesto: quedarse fuera más tiempo y aventajarle cuando él sale del pit lane.</p>
+                </div>
+                <div class="pillar-card" style="--accent: var(--green);">
+                    <div class="pillar-icon">🌧️</div>
+                    <h3>Estrategia de Lluvia</h3>
+                    <p>Cuando el cielo amenaza, el timing es crucial: entrar demasiado pronto puede costar posiciones; llegar tarde puede suponer una vuelta de pista con aquaplaning. La valentía premia, pero el error castiga.</p>
+                </div>
+                <div class="pillar-card" style="--accent: #ff7801;">
+                    <div class="pillar-icon">🏎️</div>
+                    <h3>Estrategia Alternativa</h3>
+                    <p>Un equipo que sale desde el fondo de la parrilla puede apostar por una estrategia opuesta a los líderes (neumáticos distintos, paradas en diferente momento) para ganar posiciones netas durante la carrera.</p>
+                </div>
+                <div class="pillar-card" style="--accent: #ff6ec7;">
+                    <div class="pillar-icon">🟡</div>
+                    <h3>Safety Car y VSC</h3>
+                    <p>Un safety car puede reordenar la carrera por completo. Los equipos deben decidir en segundos si entrar a boxes — perdiendo poco tiempo gracias a la neutralización — o mantener la posición en pista.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEUMÁTICOS -->
+    <section class="section-dark">
+        <div class="inner">
+            <div class="section-label">Neumáticos Pirelli</div>
+            <h2 class="section-title">Los compuestos: el corazón de la estrategia</h2>
+            <table class="roles-table">
+                <thead>
+                    <tr>
+                        <th>Compuesto</th>
+                        <th>Características</th>
+                        <th>Uso típico</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong><span class="tyre-badge tyre-soft"></span>Blando (Soft)</strong></td>
+                        <td>Máximo agarre, desgaste rápido. Ideal para clasificación y stints cortos en carrera.</td>
+                        <td>Q3, primeras vueltas</td>
+                        <td><span class="role-tag tag-red">Seco</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong><span class="tyre-badge tyre-medium"></span>Medio (Medium)</strong></td>
+                        <td>Equilibrio entre prestaciones y durabilidad. El compuesto más versátil de la parrilla.</td>
+                        <td>Stints largos y medios</td>
+                        <td><span class="role-tag tag-yellow">Seco</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong><span class="tyre-badge tyre-hard"></span>Duro (Hard)</strong></td>
+                        <td>Baja degradación, pero necesita vueltas para entrar en temperatura. Aguanta muchas vueltas.</td>
+                        <td>Estrategia de 1 parada</td>
+                        <td><span class="role-tag tag-blue">Seco</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong><span class="tyre-badge tyre-inter"></span>Intermedio</strong></td>
+                        <td>Para pista mojada sin charcos grandes. El compuesto más difícil de interpretar bien.</td>
+                        <td>Lluvia moderada</td>
+                        <td><span class="role-tag tag-green">Lluvia</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong><span class="tyre-badge tyre-wet"></span>Lluvia (Full Wet)</strong></td>
+                        <td>Máxima evacuación de agua. Obligatorio en condiciones extremas; muy lento en seco.</td>
+                        <td>Lluvia intensa</td>
+                        <td><span class="role-tag tag-blue">Lluvia</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- FACTORES CLAVE -->
+    <section class="section-light">
+        <div class="inner">
+            <div class="section-label" style="color:#b00018;">Decisiones en tiempo real</div>
+            <h2 class="section-title section-title-dark">¿Qué analiza el muro de boxes?</h2>
+            <div class="org-grid">
+                <div class="org-card">
+                    <div class="org-card-header">
+                        <div class="org-icon">📊</div>
+                        <h3>Degradación de Neumáticos</h3>
+                    </div>
+                    <ul>
+                        <li>Cada vuelta, el ingeniero monitoriza el desgaste de las cuatro gomas.</li>
+                        <li>Se compara la degradación propia con la de los rivales directos.</li>
+                        <li>Se estima cuántas vueltas más puede rendir el compuesto actual.</li>
+                        <li>La sobredegradación puede obligar a una parada no planificada.</li>
+                    </ul>
+                </div>
+                <div class="org-card">
+                    <div class="org-card-header">
+                        <div class="org-icon">⛽</div>
+                        <h3>Combustible y ERS</h3>
+                    </div>
+                    <ul>
+                        <li>Los pilotos gestionan el consumo de combustible vuelta a vuelta.</li>
+                        <li>El sistema ERS (energía recuperada) se gestiona estratégicamente por sectores.</li>
+                        <li>Un consumo excesivo puede obligar a reducir ritmo al final de la carrera.</li>
+                        <li>Los ingenieros calculan el "fuel saving" necesario según la estrategia elegida.</li>
+                    </ul>
+                </div>
+                <div class="org-card">
+                    <div class="org-card-header">
+                        <div class="org-icon">🌦️</div>
+                        <h3>Meteorología</h3>
+                    </div>
+                    <ul>
+                        <li>Los equipos cuentan con meteorólogos propios integrados en el muro de boxes.</li>
+                        <li>Radar de lluvia en tiempo real con actualizaciones cada pocos minutos.</li>
+                        <li>Una predicción errónea puede arruinar una estrategia perfectamente planificada.</li>
+                        <li>Las ventanas de lluvia crean oportunidades enormes para equipos retrasados.</li>
+                    </ul>
+                </div>
+                <div class="org-card">
+                    <div class="org-card-header">
+                        <div class="org-icon">🎯</div>
+                        <h3>Tráfico y Posiciones</h3>
+                    </div>
+                    <ul>
+                        <li>Entrar al pit lane en el momento justo puede evitar "salir detrás de tráfico".</li>
+                        <li>La ventana de undercut se calcula en función del gap al coche de adelante.</li>
+                        <li>Salir entre dos coches rivales en boxes puede costar segundos valiosos.</li>
+                        <li>El tráfico con doblados también influye en el timing de las paradas.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

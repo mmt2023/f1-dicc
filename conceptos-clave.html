@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conceptos Clave</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --yellow: #ffd700;
+    --blue: #00aaff;
+    --green: #00c853;
+    --dark: #0a0a0a;
+    --mid: #1a1a1a;
+    --bg-main: linear-gradient(135deg,
+      #c3c7cc 0%,
+      #b5bbc2 25%,
+      #a6adb5 50%,
+      #9aa2ab 75%,
+      #8e979f 100%);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg-main);
+    background-attachment: fixed;
+    color: #111;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 100px;
+    border-bottom: 1px solid #222;
+  }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: currentColor;
+    transition: width 0.25s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a:hover { opacity: 0.8; }
+  .nav-links a.red   { color: #e8001d; }
+  .nav-links a.white { color: #fff; }
+  .nav-links a.green { color: var(--green); }
+  .nav-links a.blue  { color: var(--blue); }
+  .nav-links a.pink  { color: #ff6ec7; }
+  .nav-links a.orange { color: #ff7801; }
+
+  .nav-item { position: relative; display: inline-block; }
+  .dropdown {
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+  }
+  .dropdown a {
+    color: var(--blue);
+    text-decoration: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    transition: color 0.2s;
+  }
+  .dropdown a:hover { color: #fff; }
+  .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+  .dropdown-fia a { color: var(--green); }
+  .dropdown-fia a:hover { color: #fff; }
+
+  .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+  .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+  .nav-right a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: underline;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 3rem 2rem;
+  }
+
+  .hero-text {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .hero-text h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #111;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .hero-text p {
+    font-size: 0.9rem;
+    color: #333;
+    margin-top: 0.5rem;
+    letter-spacing: 0.05em;
+    font-weight: 300;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CONTENT WRAPPER ── */
+  .content-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 2rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── CONCEPTO CARD ── */
+  .concepto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 3rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    animation: fadeUp 0.6s ease both;
+  }
+
+  /* Alternado: imagen a la derecha */
+  .concepto.reverse {
+    direction: rtl;
+  }
+  .concepto.reverse > * {
+    direction: ltr;
+  }
+
+  .concepto:last-child {
+    border-bottom: none;
+  }
+
+  /* ── IMAGEN del concepto ── */
+  .concepto-img {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .concepto-img img {
+    width: 100%;
+    max-width: 320px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+    filter: grayscale(10%);
+    transition: filter 0.3s ease, transform 0.3s ease;
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.25);
+  }
+
+  .concepto-img img:hover {
+    filter: grayscale(0%);
+    transform: scale(1.02);
+  }
+
+  /* Accent line sobre la imagen */
+  .concepto-img::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: 60px;
+    height: 4px;
+    background: var(--red);
+    z-index: 2;
+  }
+
+  .concepto.reverse .concepto-img::before {
+    left: auto;
+    right: -8px;
+  }
+
+  /* Placeholder si no hay imagen */
+  .concepto-img .img-placeholder {
+    width: 100%;
+    max-width: 320px;
+    height: 220px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
+  }
+
+  /* ── TEXTO del concepto ── */
+  .concepto-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .concepto-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+
+  .concepto-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #0d0d0d;
+    line-height: 1.1;
+  }
+
+  .concepto-divider {
+    width: 40px;
+    height: 3px;
+    background: var(--red);
+  }
+
+  .concepto-body {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #222;
+    line-height: 1.75;
+    text-align: justify;
+  }
+
+  /* Flags list */
+  .flags-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+  }
+
+  .flags-list li {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #222;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .flags-list li::before {
+    content: '—';
+    color: var(--red);
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 680px) {
+    .concepto {
+      grid-template-columns: 1fr;
+    }
+    .concepto.reverse {
+      direction: ltr;
+    }
+    .concepto-img img,
+    .concepto-img .img-placeholder {
+      max-width: 100%;
+      height: 180px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-links">
+    <a href="mini-historia.html" class="red">Mini Historia</a>
+    <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+    <div class="nav-item">
+      <a href="#" class="green">FIA</a>
+      <div class="dropdown dropdown-fia">
+        <a href="definicion-fia.html">Definición FIA</a>
+        <a href="ruedas.html">Ruedas</a>
+        <a href="reglamento.html">Reglamento</a>
+        <a href="estrategia.html">Estrategia</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#" class="blue">Equipos</a>
+      <div class="dropdown">
+        <a href="pilotos.html">Pilotos</a>
+        <a href="escuderias.html">Escuderías</a>
+        <a href="circuitos.html">Circuitos</a>
+      </div>
+    </div>
+    <a href="comentaristas.html" class="pink">Comentaristas</a>
+    <a href="fan-zone.html" class="orange">Fan Zone</a>
+  </div>
+  <div class="nav-right">
+    <a href="index.html">Diccionario de F1</a>
+    <img src="fotos/logo.png" alt="Logo F1">
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>📖 Conceptos Clave</h1>
+    <p>Todo lo que necesitas saber para entender la Fórmula 1</p>
+  </div>
+</section>
+
+<!-- CONTENIDO -->
+<div class="content-wrapper">
+
+  <!-- 1. ORIGEN DEL NOMBRE — imagen izquierda, texto derecha -->
+  <div class="concepto">
+    <div class="concepto-img">
+      <img src="fotos/f1.jpg" alt="Origen del nombre Fórmula 1"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">🏎️</div>
+    </div>
+    <div class="concepto-text">
+      <span class="concepto-number">Concepto 01</span>
+      <h2 class="concepto-title">El Origen del Nombre</h2>
+      <div class="concepto-divider"></div>
+      <p class="concepto-body">
+        El nombre "Fórmula 1" proviene de las reglas técnicas —o "fórmulas"— que determinan cómo deben construirse los monoplazas. En 1947 se fundó la FIA (Federación Internacional del Automóvil), el organismo que regula y supervisa todas las competiciones automovilísticas del mundo. En 1950 se celebró el primer Campeonato Mundial de Fórmula 1, y se añadió el número "1" para distinguir a la categoría más alta del automovilismo. Así nació oficialmente la Fórmula 1 tal como la conocemos hoy.
+      </p>
+    </div>
+  </div>
+
+  <!-- 2. CAMPEONATO DE CONSTRUCTORES — texto izquierda, imagen derecha -->
+  <div class="concepto reverse">
+    <div class="concepto-img">
+      <img src="fotos/copa.webp" alt="Campeonato de Constructores"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">🏆</div>
+    </div>
+    <div class="concepto-text">
+      <span class="concepto-number">Concepto 02</span>
+      <h2 class="concepto-title">El Campeonato de Constructores</h2>
+      <div class="concepto-divider"></div>
+      <p class="concepto-body">
+        Además de coronar al mejor piloto del mundo, el Mundial de Fórmula 1 también tiene otra competición igual de importante: el campeonato de constructores. Se trata de una clasificación de las escuderías que suman los puntos que firman sus pilotos a lo largo del año. Al final de la temporada, habrá un ganador. Esta competición existe desde 1958.
+      </p>
+    </div>
+  </div>
+
+  <!-- 3. LOS PIANOS — imagen izquierda, texto derecha -->
+  <div class="concepto">
+    <div class="concepto-img">
+      <img src="fotos/piano.webp" alt="Los pianos del circuito"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">🔴⬜</div>
+    </div>
+    <div class="concepto-text">
+      <span class="concepto-number">Concepto 03</span>
+      <h2 class="concepto-title">Los "Pianos"</h2>
+      <div class="concepto-divider"></div>
+      <p class="concepto-body">
+        Los pianos son las franjas rojas y blancas que delimitan el trazado. Marcan el límite de la pista y los pilotos no pueden pasar completamente sobre ellos, ya que podrían recibir sanciones o dañar sus neumáticos. Son uno de los límites invisibles más importantes del circuito.
+      </p>
+    </div>
+  </div>
+
+  <!-- 4. HALO — texto izquierda, imagen derecha -->
+  <div class="concepto reverse">
+    <div class="concepto-img">
+      <img src="fotos/halo.jpg" alt="El Halo en F1"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">🛡️</div>
+    </div>
+    <div class="concepto-text">
+      <span class="concepto-number">Concepto 04</span>
+      <h2 class="concepto-title">El Halo</h2>
+      <div class="concepto-divider"></div>
+      <p class="concepto-body">
+        El halo es una estructura de titanio de unos 10 kilos que protege la cabeza del piloto ante impactos o vuelcos. Desde su introducción en 2018, ha salvado varias vidas y se considera uno de los mayores avances en seguridad en la historia de la F1.
+      </p>
+    </div>
+  </div>
+
+  <!-- 5. CLASIFICACIÓN — imagen izquierda, texto derecha -->
+  <div class="concepto">
+    <div class="concepto-img">
+      <img src="fotos/clasificacion.png" alt="Clasificación Q1 Q2 Q3"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">⏱️</div>
+    </div>
+    <div class="concepto-text">
+      <span class="concepto-number">Concepto 05</span>
+      <h2 class="concepto-title">La Clasificación</h2>
+      <div class="concepto-divider"></div>
+      <p class="concepto-body">
+        La clasificación del sábado define la parrilla de salida y se divide en tres fases:<br><br>
+        <strong>Q1:</strong> Participan todos los pilotos; los 5 más lentos quedan eliminados.<br>
+        <strong>Q2:</strong> Compiten los 15 restantes; se eliminan otros 5.<br>
+        <strong>Q3:</strong> Los 10 más rápidos luchan por la pole position, es decir, la primera posición en la salida del Gran Premio.
+      </p>
+    </div>
+  </div>
+
+  <!-- 6. SAFETY CAR — texto izquierda, imagen derecha -->
+  <div class="concepto reverse">
+    <div class="concepto-img">
+      <img src="fotos/safety.jpg" alt="Safety Car y Virtual Safety Car"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">🚗</div>
+    </div>
+    <div class="concepto-text">
+      <span class="concepto-number">Concepto 06</span>
+      <h2 class="concepto-title">Safety Car & Virtual Safety Car</h2>
+      <div class="concepto-divider"></div>
+      <p class="concepto-body">
+        <strong>Safety Car:</strong> Cuando ocurre un accidente o hay peligro en pista, la FIA despliega el coche de seguridad. Los pilotos no pueden adelantar y deben mantener una velocidad reducida hasta que la pista esté despejada.<br><br>
+        <strong>Virtual Safety Car:</strong> Se usa cuando no es necesario sacar físicamente el coche. Se muestran banderas amarillas en todo el circuito y los pilotos deben reducir la velocidad electrónicamente, sin adelantar.
+      </p>
+    </div>
+  </div>
+
+  <!-- 7. LAS BANDERAS — imagen izquierda, texto derecha -->
+  <div class="concepto">
+    <div class="concepto-img">
+      <img src="fotos/bandera.jpg" alt="Banderas de la Fórmula 1"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">🏁</div>
+    </div>
+    <div class="concepto-text">
+      <span class="concepto-number">Concepto 07</span>
+      <h2 class="concepto-title">Las Banderas</h2>
+      <div class="concepto-divider"></div>
+      <ul class="flags-list">
+        <li>Cuadros blanca y negra: final de la carrera.</li>
+        <li>Amarilla: precaución, no se puede adelantar.</li>
+        <li>Roja: carrera suspendida.</li>
+        <li>Verde: pista despejada, carrera reanudada.</li>
+        <li>Azul: un coche más rápido va a doblarte.</li>
+        <li>Roja y amarilla: asfalto resbaladizo.</li>
+        <li>Negra con círculo naranja: coche dañado, debe ir a boxes.</li>
+        <li>Negra total: descalificación del piloto.</li>
+        <li>Blanca y negra diagonal: advertencia por conducta antideportiva.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

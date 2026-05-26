@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reglamento F1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --red: #e8001d; --yellow: #ffd700; --blue: #00aaff;
+            --green: #00c853; --dark: #0a0a0a; --mid: #1a1a1a;
+            --bg-main: linear-gradient(135deg, #c3c7cc 0%, #b5bbc2 25%, #a6adb5 50%, #9aa2ab 75%, #8e979f 100%);
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Barlow', sans-serif; background: var(--bg-main); color: #111; overflow-x: hidden; }
+
+        /* NAV */
+        nav {
+            position: sticky; top: 0; z-index: 100; background: #0d0d0d;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2.5rem; height: 100px; border-bottom: 1px solid #222;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.85rem; letter-spacing: 0.08em; text-decoration: none;
+            text-transform: uppercase; position: relative; transition: opacity 0.2s;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px; background: currentColor; transition: width 0.25s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.red    { color: var(--red); }
+        .nav-links a.white  { color: #fff; }
+        .nav-links a.green  { color: var(--green); }
+        .nav-links a.blue   { color: var(--blue); }
+        .nav-links a.pink   { color: #ff6ec7; }
+        .nav-links a.orange { color: #ff7801; }
+        .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+        .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+        .nav-right a {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+            color: #fff; text-decoration: underline; display: flex; align-items: center; gap: 0.4rem;
+        }
+        .nav-item { position: relative; display: inline-block; }
+        .dropdown {
+            position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            background: #111; padding: 1rem 2rem; display: flex; flex-direction: column;
+            gap: 0.8rem; opacity: 0; visibility: hidden; transition: 0.3s ease;
+        }
+        .dropdown a {
+            color: var(--blue); text-decoration: none;
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.8rem; transition: color 0.2s;
+        }
+        .dropdown a:hover { color: #fff; }
+        .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+        .dropdown-fia a { color: var(--green); }
+        .dropdown-fia a:hover { color: #fff; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; padding: 3rem 2rem;
+  }
+  .hero-text { position: relative; z-index: 1; text-align: center; }
+  .hero-text h1 {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: 0.08em;
+    text-transform: uppercase; color: #111; animation: fadeUp 0.7s ease both;
+  }
+  .hero-text p {
+    font-size: 0.9rem; color: #333; margin-top: 0.5rem;
+    letter-spacing: 0.05em; font-weight: 300; animation: fadeUp 0.7s 0.1s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+        /* SECTIONS */
+        .section-dark  { background: #0d0d0d; padding: 4rem 2rem; }
+        .section-light { background: var(--bg-main); padding: 4rem 2rem; }
+        .inner { max-width: 1200px; margin: 0 auto; }
+        .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--green); margin-bottom: 0.75rem; }
+        .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(1.6rem, 3vw, 2.4rem); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1.5rem; color: #fff; }
+        .section-title-dark { color: #0d0d0d; }
+
+        /* ====== TABS ====== */
+        .tabs-wrapper { margin-top: 2rem; }
+        .tab-btns { display: flex; gap: 0; border-bottom: 2px solid #1e1e1e; margin-bottom: 0; }
+        .tab-btn {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 0.8rem 1.6rem; background: none; border: none; cursor: pointer;
+            color: #666; border-bottom: 3px solid transparent; margin-bottom: -2px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+        .tab-btn:hover:not(.active) { color: #ccc; }
+        .tab-panel { display: none; padding: 2.5rem 0; }
+        .tab-panel.active { display: block; }
+
+        /* Reglamento cards inside tabs */
+        .reg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .reg-card {
+            background: #111; border: 1px solid #1e1e1e; border-radius: 8px;
+            padding: 1.8rem; transition: border-color 0.3s, transform 0.2s;
+            position: relative; overflow: hidden;
+        }
+        .reg-card::after {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 80px; height: 80px;
+            background: radial-gradient(circle at top right, rgba(0,200,83,0.08), transparent 70%);
+        }
+        .reg-card:hover { border-color: var(--green); transform: translateY(-3px); }
+        .reg-card-num {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+            font-size: 0.7rem; letter-spacing: 0.2em; color: var(--green);
+            text-transform: uppercase; margin-bottom: 0.6rem; display: block;
+        }
+        .reg-card h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; margin-bottom: 0.6rem; }
+        .reg-card p { font-size: 0.87rem; line-height: 1.7; color: #888; }
+        .reg-card ul { list-style: none; margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem; }
+        .reg-card li { font-size: 0.85rem; color: #777; padding-left: 1rem; position: relative; }
+        .reg-card li::before { content: '—'; position: absolute; left: 0; color: var(--green); font-size: 0.7rem; top: 3px; }
+
+        /* ====== FLAGS SECTION ====== */
+        .flags-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-top: 2.5rem;
+        }
+        .flag-card {
+            border-radius: 8px; padding: 1.6rem 1.2rem;
+            position: relative; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+        }
+        .flag-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+        .flag-card .flag-swatch {
+            width: 48px; height: 48px; border-radius: 4px; margin-bottom: 1rem;
+            display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+        }
+        .flag-card h3 {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+            font-size: 1.1rem; letter-spacing: 0.07em; text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        .flag-card p { font-size: 0.83rem; line-height: 1.65; }
+
+        /* flag variants */
+        .flag-yellow { background: #2a2200; color: #ffd700; }
+        .flag-yellow .flag-swatch { background: #ffd700; }
+        .flag-yellow h3 { color: #ffd700; }
+        .flag-yellow p { color: #b09020; }
+
+        .flag-red { background: #200006; color: var(--red); }
+        .flag-red .flag-swatch { background: var(--red); }
+        .flag-red h3 { color: var(--red); }
+        .flag-red p { color: #8a2020; }
+
+        .flag-blue { background: #001628; color: var(--blue); }
+        .flag-blue .flag-swatch { background: var(--blue); }
+        .flag-blue h3 { color: var(--blue); }
+        .flag-blue p { color: #2060a0; }
+
+        .flag-safety { background: #0d1a00; color: var(--green); }
+        .flag-safety .flag-swatch { background: var(--green); }
+        .flag-safety h3 { color: var(--green); }
+        .flag-safety p { color: #336633; }
+
+        .flag-white { background: #1a1a1a; color: #eee; }
+        .flag-white .flag-swatch { background: #fff; }
+        .flag-white h3 { color: #eee; }
+        .flag-white p { color: #888; }
+
+        .flag-black { background: #111; color: #ccc; border: 1px solid #2a2a2a; }
+        .flag-black .flag-swatch { background: #111; border: 2px solid #444; }
+        .flag-black h3 { color: #ccc; }
+        .flag-black p { color: #666; }
+
+        .flag-chequered { background: #111; color: #fff; border: 1px solid #2a2a2a; }
+        .flag-chequered .flag-swatch {
+            background: repeating-conic-gradient(#fff 0% 25%, #111 0% 50%) 0 0 / 16px 16px;
+        }
+        .flag-chequered h3 { color: #fff; }
+        .flag-chequered p { color: #777; }
+
+        .flag-blackwhite { background: #1a1008; color: #ff9900; }
+        .flag-blackwhite .flag-swatch {
+            background: linear-gradient(to right, #111 50%, #fff 50%);
+        }
+        .flag-blackwhite h3 { color: #ff9900; }
+        .flag-blackwhite p { color: #996600; }
+
+        /* ====== ACCORDION — PENALIZACIONES ====== */
+        .accordion { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 2rem; }
+        .accordion-item { border: 1px solid #1e1e1e; border-radius: 8px; overflow: hidden; }
+        .accordion-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1.2rem 1.6rem; background: #111; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .accordion-header:hover { background: #161616; }
+        .accordion-header-left { display: flex; align-items: center; gap: 1.2rem; }
+        .acc-icon {
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 1rem; flex-shrink: 0; font-weight: 900;
+        }
+        .acc-icon.minor   { background: #fffde7; color: #f57f17; }
+        .acc-icon.medium  { background: #fff3e0; color: #e65100; }
+        .acc-icon.major   { background: #ffebee; color: #c62828; }
+        .acc-icon.max     { background: #1a0000; color: var(--red); border: 1px solid var(--red); }
+        .accordion-header h3 {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 1.05rem; letter-spacing: 0.07em; text-transform: uppercase; color: #fff;
+        }
+        .accordion-header .acc-tag {
+            font-size: 0.72rem; font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 0.15rem 0.6rem; border-radius: 3px;
+        }
+        .acc-tag.minor   { background: #fffde7; color: #f57f17; }
+        .acc-tag.medium  { background: #fff3e0; color: #e65100; }
+        .acc-tag.major   { background: #ffebee; color: #c62828; }
+        .acc-tag.max     { background: #2a0000; color: var(--red); }
+        .accordion-arrow {
+            font-size: 1.2rem; color: #444; transition: transform 0.3s ease;
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 900; flex-shrink: 0;
+        }
+        .accordion-item.open .accordion-arrow { transform: rotate(180deg); color: var(--green); }
+        .accordion-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;
+            background: #0d0d0d;
+        }
+        .accordion-item.open .accordion-body { max-height: 600px; }
+        .accordion-inner { padding: 1.5rem 1.6rem 1.5rem 4.5rem; }
+        .acc-list { display: flex; flex-direction: column; gap: 0.6rem; }
+        .acc-list li { font-size: 0.88rem; color: #888; padding-left: 1.2rem; position: relative; line-height: 1.6; }
+        .acc-list li::before { content: '›'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+        .acc-examples {
+            margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .acc-example-tag {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+            font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+            background: #1a1a1a; color: #666; border: 1px solid #252525;
+            padding: 0.3rem 0.7rem; border-radius: 3px;
+        }
+
+        /* ====== PUNTOS SECTION ====== */
+        .points-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: start; margin-top: 2rem; }
+        .points-bars { display: flex; flex-direction: column; gap: 0.6rem; }
+        .point-row { display: flex; align-items: center; gap: 1rem; }
+        .point-pos {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+            font-size: 1rem; color: #fff; width: 28px; text-align: right; flex-shrink: 0;
+        }
+        .point-pos.p1 { color: var(--yellow); }
+        .point-pos.p2 { color: #e0e0e0; }
+        .point-pos.p3 { color: #cd7f32; }
+        .point-bar-wrap { flex: 1; background: #1a1a1a; border-radius: 3px; height: 28px; overflow: hidden; position: relative; }
+        .point-bar {
+            height: 100%; background: linear-gradient(90deg, var(--green), rgba(0,200,83,0.5));
+            border-radius: 3px; display: flex; align-items: center; justify-content: flex-end;
+            padding-right: 0.6rem; transition: width 1.2s cubic-bezier(.4,0,.2,1);
+        }
+        .point-bar.gold   { background: linear-gradient(90deg, var(--yellow), rgba(255,215,0,0.4)); }
+        .point-bar.silver { background: linear-gradient(90deg, #bbb, rgba(200,200,200,0.4)); }
+        .point-bar.bronze { background: linear-gradient(90deg, #cd7f32, rgba(205,127,50,0.4)); }
+        .point-val {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.78rem; color: #0d0d0d; letter-spacing: 0.05em;
+        }
+        .points-extra { background: #111; border-radius: 8px; padding: 1.8rem; border: 1px solid #1e1e1e; }
+        .points-extra h3 {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase;
+            color: #fff; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px solid #1e1e1e;
+        }
+        .bonus-row { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid #141414; }
+        .bonus-row:last-child { border-bottom: none; }
+        .bonus-desc { font-size: 0.87rem; color: #999; }
+        .bonus-pts {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+            font-size: 1.2rem; color: var(--green);
+        }
+
+        /* ====== PARC FERMÉ ====== */
+        .parcferme-strip {
+            background: repeating-linear-gradient(
+                45deg,
+                #1a1a1a 0px, #1a1a1a 10px,
+                #151515 10px, #151515 20px
+            );
+            border: 1px solid #2a2a2a; border-radius: 8px;
+            padding: 3rem 2.5rem; margin-top: 2.5rem;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+        }
+        .parcferme-text .section-label { color: var(--yellow); }
+        .parcferme-text h3 {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+            font-size: 1.8rem; letter-spacing: 0.07em; text-transform: uppercase;
+            color: #fff; margin-bottom: 1rem;
+        }
+        .parcferme-text p { font-size: 0.9rem; line-height: 1.75; color: #999; margin-bottom: 0.8rem; }
+        .parcferme-text strong { color: var(--yellow); font-weight: 600; }
+        .parcferme-rules { display: flex; flex-direction: column; gap: 0.8rem; }
+        .pf-rule {
+            background: rgba(0,0,0,0.5); border-radius: 6px;
+            padding: 0.9rem 1.2rem; display: flex; align-items: flex-start; gap: 0.8rem;
+            border-left: 3px solid var(--yellow);
+        }
+        .pf-rule-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .pf-rule p { font-size: 0.86rem; color: #aaa; line-height: 1.6; }
+        .pf-rule strong { color: #fff; font-weight: 600; }
+
+        /* ====== QUOTE ====== */
+        .quote-banner { background: #0d0d0d; border-left: 4px solid var(--green); padding: 2rem 2.5rem; border-radius: 0 8px 8px 0; margin-top: 3rem; }
+        .quote-banner blockquote { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 1.4rem; color: #fff; letter-spacing: 0.03em; line-height: 1.4; margin-bottom: 0.75rem; }
+        .quote-banner cite { font-size: 0.82rem; color: var(--green); letter-spacing: 0.1em; text-transform: uppercase; font-style: normal; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; }
+            .hero-right { clip-path: none; }
+            .reg-grid { grid-template-columns: 1fr; }
+            .flags-grid { grid-template-columns: repeat(2,1fr); }
+            .points-layout { grid-template-columns: 1fr; }
+            .parcferme-strip { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .flags-grid { grid-template-columns: 1fr; }
+            nav { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-links">
+            <a href="mini-historia.html" class="red">Mini Historia</a>
+            <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+            <div class="nav-item">
+                <a href="#" class="green">FIA</a>
+                <div class="dropdown dropdown-fia">
+                    <a href="definicion-fia.html">Definición FIA</a>
+                    <a href="ruedas.html">Ruedas</a>
+                    <a href="reglamento.html">Reglamento</a>
+                    <a href="estrategia.html">Estrategia</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="blue">Equipos</a>
+                <div class="dropdown">
+                    <a href="pilotos.html">Pilotos</a>
+                    <a href="escuderias.html">Escuderías</a>
+                    <a href="circuitos.html">Circuitos</a>
+                </div>
+            </div>
+            <a href="comentaristas.html" class="pink">Comentaristas</a>
+            <a href="fan-zone.html" class="orange">Fan Zone</a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html">Diccionario de F1</a>
+            <img src="fotos/logo.png" alt="Logo F1">
+        </div>
+    </nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>Reglamento</h1>
+  </div>
+</section>
+
+    <!-- TIPOS DE REGLAMENTO CON TABS -->
+    <section class="section-dark">
+        <div class="inner">
+            <div class="section-label">Normativa</div>
+            <h2 class="section-title">Los tres pilares del reglamento</h2>
+
+            <div class="tabs-wrapper">
+                <div class="tab-btns">
+                    <button class="tab-btn active" data-tab="tecnico">🔧 Técnico</button>
+                    <button class="tab-btn" data-tab="deportivo">🏁 Deportivo</button>
+                    <button class="tab-btn" data-tab="financiero">💰 Financiero</button>
+                </div>
+
+                <div class="tab-panel active" id="tab-tecnico">
+                    <div class="reg-grid">
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 3 — Carrocería</span>
+                            <h3>Aerodinámica</h3>
+                            <p>Define las dimensiones máximas del alerón delantero y trasero, las zonas de efecto suelo, el diffuser y cualquier elemento generador de carga aerodinámica.</p>
+                            <ul>
+                                <li>Altura máxima del alerón trasero: 950 mm desde el suelo</li>
+                                <li>Fondo plano obligatorio en zonas definidas</li>
+                                <li>Restricciones en geometría de bargeboards</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 5 — Unidad de potencia</span>
+                            <h3>Motor e Híbrido</h3>
+                            <p>Regula el motor de combustión interna V6 1.6L turbo y los sistemas de recuperación de energía ERS-K (cinética) y ERS-H (calor del turbo).</p>
+                            <ul>
+                                <li>Máximo 4 unidades de potencia por temporada</li>
+                                <li>Despliegue máximo de 120 kW del MGU-K</li>
+                                <li>Congelación del desarrollo del motor</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 4 — Peso</span>
+                            <h3>Peso y dimensiones</h3>
+                            <p>El monoplaza completo con piloto debe superar el peso mínimo reglamentario. Las dimensiones máximas están estrictamente limitadas.</p>
+                            <ul>
+                                <li>Peso mínimo con piloto: 798 kg (2024)</li>
+                                <li>Anchura máxima del coche: 2000 mm</li>
+                                <li>Lastres de ajuste permitidos en posiciones homologadas</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 15 — Seguridad</span>
+                            <h3>Seguridad estructural</h3>
+                            <p>Especifica los test de choque obligatorios, la resistencia del cockpit, el halo, la célula de supervivencia y los protocolos de extracción del piloto.</p>
+                            <ul>
+                                <li>Test de choque frontal, lateral y trasero obligatorios</li>
+                                <li>Halo obligatorio desde 2018</li>
+                                <li>Extracción del piloto en menos de 5 segundos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="tab-deportivo">
+                    <div class="reg-grid">
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 42 — Formato</span>
+                            <h3>Estructura del fin de semana</h3>
+                            <p>Define los tres días del Gran Premio: práctica libre, clasificación y carrera. Los fines de semana sprint tienen un formato propio con mini-clasificación y carrera corta el sábado.</p>
+                            <ul>
+                                <li>FP1, FP2, FP3 + Clasificación + Carrera (formato estándar)</li>
+                                <li>Fines de semana sprint: FP1 + SQ + Sprint + Quali + Carrera</li>
+                                <li>Distancia mínima de carrera: 305 km (305 km salvo Mónaco)</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 25 — Neumáticos</span>
+                            <h3>Estrategia de neumáticos</h3>
+                            <p>Pirelli es el proveedor único. Los equipos deben utilizar al menos dos compuestos distintos durante la carrera, salvo que llueva.</p>
+                            <ul>
+                                <li>Obligatorio usar los tres compuestos disponibles (seco)</li>
+                                <li>13 juegos de slicks asignados por piloto por fin de semana</li>
+                                <li>Libertad de estrategia con compuestos intermedios/lluvia</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 58 — Salidas</span>
+                            <h3>Procedimiento de salida</h3>
+                            <p>Regula la vuelta de formación, las salidas detenidas y paradas, el procedimiento del safety car virtual y las salidas desde pitlane.</p>
+                            <ul>
+                                <li>5 luces rojas definen el inicio de la carrera</li>
+                                <li>Penalización de parrilla por infracción en vuelta de formación</li>
+                                <li>Salida desde pitlane si el coche no está listo a tiempo</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 54 — Pitstop</span>
+                            <h3>Paradas en boxes</h3>
+                            <p>Los pitstops no tienen tiempo mínimo reglamentario pero sí normas sobre qué puede tocarse. Cualquier trabajo no reglamentario es penalizable.</p>
+                            <ul>
+                                <li>Permitido: cambio de neumáticos, ajuste de alerón (si el reglamento lo permite)</li>
+                                <li>Prohibido: repostar combustible desde 2010</li>
+                                <li>Drive-through o Stop-and-Go como penalizaciones en carrera</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="tab-financiero">
+                    <div class="reg-grid">
+                        <div class="reg-card">
+                            <span class="reg-card-num">Cost Cap 2024</span>
+                            <h3>Tope presupuestario</h3>
+                            <p>Desde 2021, todos los equipos están sujetos a un límite de gasto anual auditado por la FIA. Busca reducir la brecha competitiva entre los grandes y pequeños equipos.</p>
+                            <ul>
+                                <li>Tope base: 145 millones USD (2024)</li>
+                                <li>Excluye: salarios del piloto, tres empleados mejor pagados y marketing</li>
+                                <li>Sanción máxima: exclusión del campeonato</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 6 — Distribución</span>
+                            <h3>Reparto de ingresos</h3>
+                            <p>F1 Management distribuye los ingresos del campeonato entre los equipos en función de su clasificación final y bonificaciones históricas negociadas en el Pacto de la Concordia.</p>
+                            <ul>
+                                <li>El reparto se basa en el Pacto de la Concordia vigente</li>
+                                <li>Los equipos reciben entre 50M y 150M USD anuales</li>
+                                <li>Bonificaciones extra para equipos históricos (Ferrari, etc.)</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Art. 9 — Homologación</span>
+                            <h3>Token de desarrollo</h3>
+                            <p>En fases de congelación técnica, los equipos disponen de un número limitado de «tokens» para introducir mejoras en el motor. Esto regula el ritmo de desarrollo.</p>
+                            <ul>
+                                <li>Sistema activo durante congelación de PU (2022–2025)</li>
+                                <li>Motor congelado salvo razones de fiabilidad aprobadas</li>
+                                <li>Excepciones para nuevos fabricantes (concesiones)</li>
+                            </ul>
+                        </div>
+                        <div class="reg-card">
+                            <span class="reg-card-num">Pacto de la Concordia</span>
+                            <h3>Acuerdo de gobernanza</h3>
+                            <p>Contrato tripartito entre la FIA, F1 Management y los equipos que define las condiciones económicas, deportivas y de gobernanza del campeonato.</p>
+                            <ul>
+                                <li>Renovado en 2021 con vigencia hasta 2025</li>
+                                <li>Todos los equipos deben firmarlo para participar</li>
+                                <li>Regula el voto de equipos en decisiones reglamentarias</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANDERAS — cards visuales de color -->
+    <section class="section-light">
+        <div class="inner">
+            <div class="section-label" style="color:#006630;">Señalización</div>
+            <h2 class="section-title section-title-dark">Sistema de banderas en pista</h2>
+            <div class="flags-grid">
+                <div class="flag-card flag-yellow">
+                    <div class="flag-swatch"></div>
+                    <h3>Bandera Amarilla</h3>
+                    <p>Indica peligro en pista. Los pilotos deben reducir velocidad, no adelantar y estar preparados para detenerse. Doble amarilla implica máxima precaución.</p>
+                </div>
+                <div class="flag-card flag-red">
+                    <div class="flag-swatch"></div>
+                    <h3>Bandera Roja</h3>
+                    <p>Detención inmediata de la carrera o sesión. Todos los coches regresan al pitlane. Se activa en accidentes graves o condiciones de pista peligrosas.</p>
+                </div>
+                <div class="flag-card flag-blue">
+                    <div class="flag-swatch"></div>
+                    <h3>Bandera Azul</h3>
+                    <p>Señal al piloto de que un coche más rápido (a punto de doblarlo) se aproxima por detrás. Debe ceder el paso en los tres puntos de bandera azul.</p>
+                </div>
+                <div class="flag-card flag-safety">
+                    <div class="flag-swatch">🟢</div>
+                    <h3>Luz Verde / SC</h3>
+                    <p>Luz verde: pista despejada. El tablero naranja con SC indica la entrada del Safety Car oficial, neutralizando la carrera sin detenerla.</p>
+                </div>
+                <div class="flag-card flag-white">
+                    <div class="flag-swatch"></div>
+                    <h3>Bandera Blanca</h3>
+                    <p>Avisa de la presencia de un vehículo lento en pista (safety car, medical car o coche dañado). Los pilotos deben extremar la precaución.</p>
+                </div>
+                <div class="flag-card flag-black">
+                    <div class="flag-swatch"></div>
+                    <h3>Bandera Negra</h3>
+                    <p>Descalificación inmediata del piloto al que se muestra junto a su número. Debe abandonar la carrera en esa misma vuelta. Infracción grave del reglamento.</p>
+                </div>
+                <div class="flag-card flag-chequered">
+                    <div class="flag-swatch"></div>
+                    <h3>Bandera de Cuadros</h3>
+                    <p>Fin de la sesión o carrera. Se muestra al piloto en cabeza y continúa hasta que todos los coches clasificados cruzan la línea.</p>
+                </div>
+                <div class="flag-card flag-blackwhite">
+                    <div class="flag-swatch"></div>
+                    <h3>Mitad Negra/Blanca</h3>
+                    <p>Advertencia formal por conducta antideportiva. No es una sanción pero queda registrada. Una segunda suele derivar en la bandera negra.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PENALIZACIONES — ACORDEÓN -->
+    <section class="section-dark">
+        <div class="inner">
+            <div class="section-label">Sanciones</div>
+            <h2 class="section-title">Sistema de penalizaciones</h2>
+            <div class="accordion">
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-header-left">
+                            <div class="acc-icon minor">⚠️</div>
+                            <div>
+                                <h3>Penalizaciones Leves</h3>
+                            </div>
+                            <span class="acc-tag minor">5 seg</span>
+                        </div>
+                        <div class="accordion-arrow">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-inner">
+                            <ul class="acc-list">
+                                <li>Penalización de tiempo de 5 segundos añadida al resultado final.</li>
+                                <li>Generalmente aplicada por contacto menor sin daño significativo.</li>
+                                <li>También por salida anticipada del pitlane (unsafe release) en casos leves.</li>
+                                <li>Se acumula al tiempo total de carrera, no implica parada obligatoria.</li>
+                            </ul>
+                            <div class="acc-examples">
+                                <span class="acc-example-tag">Toque en frenada</span>
+                                <span class="acc-example-tag">Cortar chicane</span>
+                                <span class="acc-example-tag">Pitlane speeding leve</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-header-left">
+                            <div class="acc-icon medium">🔶</div>
+                            <div>
+                                <h3>Penalizaciones Moderadas</h3>
+                            </div>
+                            <span class="acc-tag medium">10 seg / Drive-Through</span>
+                        </div>
+                        <div class="accordion-arrow">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-inner">
+                            <ul class="acc-list">
+                                <li>Penalización de 10 segundos o drive-through obligatorio durante la carrera.</li>
+                                <li>El drive-through implica pasar por pitlane sin detenerse, perdiendo 20-25 segundos.</li>
+                                <li>Stop-and-Go de 10 seg: parada obligatoria estacionado en boxes exactamente 10 segundos.</li>
+                                <li>Aplicable por maniobras peligrosas repetidas o infracciones técnicas en carrera.</li>
+                            </ul>
+                            <div class="acc-examples">
+                                <span class="acc-example-tag">Maniobra defensiva irregular</span>
+                                <span class="acc-example-tag">Velocidad en pitlane</span>
+                                <span class="acc-example-tag">Salida antes de señal</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-header-left">
+                            <div class="acc-icon major">🚩</div>
+                            <div>
+                                <h3>Penalizaciones de Parrilla</h3>
+                            </div>
+                            <span class="acc-tag major">-3 a -10 posiciones</span>
+                        </div>
+                        <div class="accordion-arrow">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-inner">
+                            <ul class="acc-list">
+                                <li>Retroceso de posiciones en la parrilla de salida de la siguiente carrera.</li>
+                                <li>Cambio de elementos de la unidad de potencia por encima del límite anual: 5, 10 o hasta posición en parrilla según el componente.</li>
+                                <li>Si la penalización supera la posición disponible, se aplica en la siguiente cita.</li>
+                                <li>Acumulable: varios cambios en un fin de semana suman posiciones de penalización.</li>
+                            </ul>
+                            <div class="acc-examples">
+                                <span class="acc-example-tag">4.º motor del año</span>
+                                <span class="acc-example-tag">2.ª batería MGU</span>
+                                <span class="acc-example-tag">Conducción peligrosa</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-header-left">
+                            <div class="acc-icon max">🔴</div>
+                            <div>
+                                <h3>Penalizaciones Máximas</h3>
+                            </div>
+                            <span class="acc-tag max">DSQ / Exclusión</span>
+                        </div>
+                        <div class="accordion-arrow">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-inner">
+                            <ul class="acc-list">
+                                <li>Descalificación del resultado de una carrera o de toda la temporada.</li>
+                                <li>Exclusión por incumplimiento técnico grave detectado en inspección post-carrera.</li>
+                                <li>Puede aplicarse hasta 30 minutos después de la publicación de los resultados oficiales.</li>
+                                <li>Suspensión de carrera acumulando 12 puntos de penalización en la superlicencia.</li>
+                                <li>Superlicencia retirada: medida extrema para conducta gravemente antideportiva.</li>
+                            </ul>
+                            <div class="acc-examples">
+                                <span class="acc-example-tag">Irregularidad técnica grave</span>
+                                <span class="acc-example-tag">Superar tope presupuestario</span>
+                                <span class="acc-example-tag">Conducta antideportiva</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- PUNTOS -->
+    <section class="section-light">
+        <div class="inner">
+            <div class="section-label" style="color:#006630;">Campeonato</div>
+            <h2 class="section-title section-title-dark">Sistema de puntos</h2>
+            <div class="points-layout">
+                <div class="points-bars" id="pointsBars">
+                    <!-- JS rellena las barras -->
+                </div>
+                <div class="points-extra">
+                    <h3>Puntos adicionales</h3>
+                    <div class="bonus-row">
+                        <span class="bonus-desc">Vuelta rápida (si terminas en Top 10)</span>
+                        <span class="bonus-pts">+1</span>
+                    </div>
+                    <div class="bonus-row">
+                        <span class="bonus-desc">Victoria en Sprint Race</span>
+                        <span class="bonus-pts">8</span>
+                    </div>
+                    <div class="bonus-row">
+                        <span class="bonus-desc">2.º en Sprint Race</span>
+                        <span class="bonus-pts">7</span>
+                    </div>
+                    <div class="bonus-row">
+                        <span class="bonus-desc">3.º en Sprint Race</span>
+                        <span class="bonus-pts">6</span>
+                    </div>
+                    <div class="bonus-row">
+                        <span class="bonus-desc">Sprint: posiciones 4–8</span>
+                        <span class="bonus-pts">5–1</span>
+                    </div>
+                    <div class="bonus-row" style="border-bottom:none;">
+                        <span class="bonus-desc">Fuera del Top 10 / DNF</span>
+                        <span class="bonus-pts" style="color:#555;">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parc Fermé -->
+            <div class="parcferme-strip">
+                <div class="parcferme-text">
+                    <div class="section-label">Reglamento especial</div>
+                    <h3>Parc Fermé</h3>
+                    <p>Desde el inicio de la clasificación hasta el final de la carrera, los monoplazas entran en régimen de <strong>Parc Fermé</strong>. Durante ese tiempo, los equipos tienen prohibido realizar cambios significativos al coche.</p>
+                    <p>Si un equipo introduce modificaciones no autorizadas, el piloto debe salir desde el <strong>pitlane</strong> en lugar de desde su posición de parrilla.</p>
+                </div>
+                <div class="parcferme-rules">
+                    <div class="pf-rule">
+                        <div class="pf-rule-icon">🚫</div>
+                        <p><strong>Prohibido:</strong> Cambiar configuración aerodinámica, ajuste de suspensión, setup de frenos o mapas de motor no aprobados.</p>
+                    </div>
+                    <div class="pf-rule">
+                        <div class="pf-rule-icon">✅</div>
+                        <p><strong>Permitido:</strong> Reparaciones por daños de carrera, cambio de neumáticos, repostaje y trabajos de mantenimiento básico del motor.</p>
+                    </div>
+                    <div class="pf-rule">
+                        <div class="pf-rule-icon">⚠️</div>
+                        <p><strong>Infracción:</strong> Salida desde pitlane obligatoria en la carrera. El piloto pierde su posición de parrilla obtenida en clasificación.</p>
+                    </div>
+                    <div class="pf-rule">
+                        <div class="pf-rule-icon">🏎️</div>
+                        <p><strong>Sprint:</strong> En fines de semana sprint, el Parc Fermé aplica también entre la Sprint Qualifying y la carrera Sprint del sábado.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // ====== TABS ======
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ====== ACORDEÓN ======
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.closest('.accordion-item');
+                const isOpen = item.classList.contains('open');
+                document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+                if (!isOpen) item.classList.add('open');
+            });
+        });
+
+        // ====== BARRAS DE PUNTOS ======
+        const pointsData = [
+            { pos: '1', pts: 25, cls: 'gold p1' },
+            { pos: '2', pts: 18, cls: 'silver p2' },
+            { pos: '3', pts: 15, cls: 'bronze p3' },
+            { pos: '4', pts: 12, cls: '' },
+            { pos: '5', pts: 10, cls: '' },
+            { pos: '6', pts: 8, cls: '' },
+            { pos: '7', pts: 6, cls: '' },
+            { pos: '8', pts: 4, cls: '' },
+            { pos: '9', pts: 2, cls: '' },
+            { pos: '10', pts: 1, cls: '' },
+        ];
+
+        const container = document.getElementById('pointsBars');
+        pointsData.forEach(({ pos, pts, cls }) => {
+            const pct = (pts / 25) * 100;
+            container.innerHTML += `
+                <div class="point-row">
+                    <div class="point-pos ${cls.includes('p') ? cls.split(' ')[1] : ''}">${pos}º</div>
+                    <div class="point-bar-wrap">
+                        <div class="point-bar ${cls.split(' ')[0]}" style="width:0%" data-pct="${pct}">
+                            <span class="point-val">${pts} pts</span>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        // Animar barras al entrar en viewport
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    document.querySelectorAll('.point-bar').forEach(bar => {
+                        bar.style.width = bar.dataset.pct + '%';
+                    });
+                    observer.disconnect();
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const barsSection = document.getElementById('pointsBars');
+        if (barsSection) observer.observe(barsSection);
+    </script>
+
+</body>
+</html>

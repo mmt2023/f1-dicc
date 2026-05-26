@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definición FIA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --red: #e8001d; --yellow: #ffd700; --blue: #00aaff;
+            --green: #00c853; --dark: #0a0a0a; --mid: #1a1a1a;
+            --bg-main: linear-gradient(135deg, #c3c7cc 0%, #b5bbc2 25%, #a6adb5 50%, #9aa2ab 75%, #8e979f 100%);
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Barlow', sans-serif; background: var(--bg-main); color: #111; overflow-x: hidden; }
+
+        /* NAV */
+        nav {
+            position: sticky; top: 0; z-index: 100; background: #0d0d0d;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2.5rem; height: 100px; border-bottom: 1px solid #222;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.85rem; letter-spacing: 0.08em; text-decoration: none;
+            text-transform: uppercase; position: relative; transition: opacity 0.2s;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px; background: currentColor; transition: width 0.25s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.red    { color: var(--red); }
+        .nav-links a.white  { color: #fff; }
+        .nav-links a.green  { color: var(--green); }
+        .nav-links a.blue   { color: var(--blue); }
+        .nav-links a.pink   { color: #ff6ec7; }
+        .nav-links a.orange { color: #ff7801; }
+        .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+        .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+        .nav-right a {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+            color: #fff; text-decoration: underline; display: flex; align-items: center; gap: 0.4rem;
+        }
+        .nav-item { position: relative; display: inline-block; }
+        .dropdown {
+            position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            background: #111; padding: 1rem 2rem; display: flex; flex-direction: column;
+            gap: 0.8rem; opacity: 0; visibility: hidden; transition: 0.3s ease;
+        }
+        .dropdown a {
+            color: var(--blue); text-decoration: none;
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.8rem; transition: color 0.2s;
+        }
+        .dropdown a:hover { color: #fff; }
+        .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+        .dropdown-fia a { color: var(--green); }
+        .dropdown-fia a:hover { color: #fff; }
+
+        /* HERO */
+        .hero {
+            background: var(--bg-main); height: 320px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: repeating-linear-gradient(90deg,
+                rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+                transparent 1px, transparent 4px);
+            opacity: 0.4;
+        }
+        .hero-badge {
+            font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.2em; text-transform: uppercase; color: var(--green);
+            border: 1.5px solid var(--green); padding: 0.3rem 1rem; border-radius: 2px;
+            margin-bottom: 1rem; position: relative; animation: fadeUp 0.6s ease both;
+        }
+        .hero h1 {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+            font-size: clamp(2.2rem, 6vw, 4rem); letter-spacing: 0.05em; text-transform: uppercase;
+            position: relative; animation: fadeUp 0.8s 0.1s ease both; color: #0a0a0a;
+        }
+        .hero h1 span { color: var(--green); }
+        .hero p {
+            font-size: 1rem; margin-top: 0.75rem; font-weight: 300;
+            letter-spacing: 0.04em; position: relative;
+            animation: fadeUp 0.8s 0.2s ease both; color: #2a2a2a;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SECTIONS */
+        .section-dark  { background: #0d0d0d; padding: 4rem 2rem; }
+        .section-light { background: var(--bg-main); padding: 4rem 2rem; }
+        .inner { max-width: 1200px; margin: 0 auto; }
+        .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--green); margin-bottom: 0.75rem; }
+        .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(1.6rem, 3vw, 2.4rem); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1.5rem; color: #fff; }
+        .section-title-dark { color: #0d0d0d; }
+
+        /* INTRO */
+        .intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+        .intro-text p { font-size: 1rem; line-height: 1.8; color: #d0d0d0; margin-bottom: 1rem; }
+        .intro-text p:last-child { margin-bottom: 0; }
+        .intro-text strong { color: var(--green); font-weight: 600; }
+        .intro-visual {
+            background: #111; border: 1px solid #1e1e1e; border-radius: 8px;
+            padding: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem;
+        }
+        .stat-row { display: flex; align-items: center; gap: 1.5rem; border-bottom: 1px solid #1e1e1e; padding-bottom: 1.2rem; }
+        .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .stat-num { font-family: 'Barlow Condensed', sans-serif; font-size: 2.8rem; font-weight: 900; color: var(--green); line-height: 1; min-width: 90px; }
+        .stat-desc { font-size: 0.85rem; line-height: 1.5; color: #999; }
+        .stat-desc strong { display: block; color: #fff; font-size: 0.95rem; margin-bottom: 0.2rem; }
+
+        /* PILLARS */
+        .pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+        .pillar-card {
+            background: #fff; border-radius: 8px; padding: 2rem 1.5rem;
+            position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .pillar-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 4px; height: 100%; background: var(--accent, var(--green));
+        }
+        .pillar-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .pillar-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .pillar-card h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.6rem; color: #0d0d0d; }
+        .pillar-card p { font-size: 0.88rem; line-height: 1.7; color: #555; }
+
+        /* TIMELINE */
+        .timeline { position: relative; margin-top: 2.5rem; padding-left: 2rem; }
+        .timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(to bottom, var(--green), #0d0d0d); }
+        .timeline-item { position: relative; margin-bottom: 2.5rem; padding-left: 2rem; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-dot { position: absolute; left: -2.5rem; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--green); border: 2px solid #0d0d0d; box-shadow: 0 0 0 3px var(--green); }
+        .timeline-year { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--green); letter-spacing: 0.04em; margin-bottom: 0.3rem; }
+        .timeline-item h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; margin-bottom: 0.4rem; }
+        .timeline-item p { font-size: 0.88rem; line-height: 1.7; color: #888; }
+
+        /* ROLES TABLE */
+        .roles-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); margin-top: 2rem; }
+        .roles-table thead { background: #0d0d0d; color: #fff; }
+        .roles-table th, .roles-table td { padding: 0.85rem 1.2rem; text-align: left; font-size: 0.9rem; }
+        .roles-table th { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.82rem; }
+        .roles-table tbody tr:nth-child(even) { background: #f4f7fa; }
+        .roles-table tbody tr { transition: background 0.2s; }
+        .roles-table tbody tr:hover { background: #e8f5e9; }
+        .role-tag { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 3px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+        .tag-green  { background: #e8f5e9; color: #2e7d32; }
+        .tag-red    { background: #ffebee; color: #c62828; }
+        .tag-blue   { background: #e3f2fd; color: #1565c0; }
+        .tag-yellow { background: #fffde7; color: #f57f17; }
+
+        /* QUOTE */
+        .quote-banner { background: #0d0d0d; border-left: 4px solid var(--green); padding: 2rem 2.5rem; border-radius: 0 8px 8px 0; margin-top: 3rem; }
+        .quote-banner blockquote { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 1.4rem; color: #fff; letter-spacing: 0.03em; line-height: 1.4; margin-bottom: 0.75rem; }
+        .quote-banner cite { font-size: 0.82rem; color: var(--green); letter-spacing: 0.1em; text-transform: uppercase; font-style: normal; }
+
+        /* ORG */
+        .org-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        .org-card { background: #111; border-radius: 8px; padding: 2rem; border: 1px solid #1e1e1e; transition: border-color 0.3s; }
+        .org-card:hover { border-color: var(--green); }
+        .org-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; padding-bottom: 1rem; border-bottom: 1px solid #1e1e1e; }
+        .org-icon { width: 42px; height: 42px; border-radius: 6px; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .org-card h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: 0.07em; text-transform: uppercase; color: #fff; }
+        .org-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+        .org-card li { font-size: 0.88rem; color: #999; padding-left: 1rem; position: relative; line-height: 1.5; }
+        .org-card li::before { content: '›'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+        @media (max-width: 900px) {
+            .intro-grid, .org-grid { grid-template-columns: 1fr; }
+            .pillars-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .pillars-grid { grid-template-columns: 1fr; }
+            nav { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-links">
+            <a href="mini-historia.html" class="red">Mini Historia</a>
+            <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+            <div class="nav-item">
+                <a href="#" class="green">FIA</a>
+                <div class="dropdown dropdown-fia">
+                    <a href="definicion-fia.html">Definición FIA</a>
+                    <a href="ruedas.html">Ruedas</a>
+                    <a href="reglamento.html">Reglamento</a>
+                    <a href="estrategia.html">Estrategia</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="blue">Equipos</a>
+                <div class="dropdown">
+                    <a href="pilotos.html">Pilotos</a>
+                    <a href="escuderias.html">Escuderías</a>
+                    <a href="circuitos.html">Circuitos</a>
+                </div>
+            </div>
+            <a href="comentaristas.html" class="pink">Comentaristas</a>
+            <a href="fan-zone.html" class="orange">Fan Zone</a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html">Diccionario de F1</a>
+            <img src="fotos/logo.png" alt="Logo F1">
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1>Definicion FIA</h1>
+        <p>Federación Internacional del Automóvil — fundada en 1904</p>
+    </section>
+
+    <!-- DEFINICIÓN + STATS -->
+    <section class="section-dark">
+        <div class="inner">
+            <div class="intro-grid">
+                <div class="intro-text">
+                    <div class="section-label">Definición</div>
+                    <h2 class="section-title">La autoridad máxima del automovilismo mundial</h2>
+                    <p>La <strong>Federación Internacional del Automóvil (FIA)</strong> es el organismo rector del automovilismo deportivo a nivel global. Su sede se encuentra en París y Ginebra, y agrupa a más de 240 organizaciones nacionales en más de 145 países.</p>
+                    <p>En el contexto de la <strong>Fórmula 1</strong>, la FIA es la máxima autoridad regulatoria: establece el reglamento técnico y deportivo, supervisa la seguridad en pista, homologa los monoplazas y sanciona a pilotos y escuderías cuando se infringen las normas.</p>
+                    <p>Su misión va más allá del deporte: la FIA también trabaja activamente en la <strong>seguridad vial</strong>, la <strong>movilidad sostenible</strong> y la <strong>accesibilidad al automóvil</strong> en todo el mundo.</p>
+                </div>
+                <div class="intro-visual">
+                    <div class="stat-row">
+                        <div class="stat-num">1904</div>
+                        <div class="stat-desc"><strong>Año de fundación</strong>Creada en París como el primer organismo internacional del automóvil.</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-num">145+</div>
+                        <div class="stat-desc"><strong>Países miembro</strong>Presencia global a través de federaciones nacionales afiliadas.</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-num">240+</div>
+                        <div class="stat-desc"><strong>Organizaciones afiliadas</strong>Clubes, federaciones y asociaciones de todo el planeta.</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-num">120</div>
+                        <div class="stat-desc"><strong>Campeonatos supervisados</strong>Desde la F1 hasta el karting, rallies y resistencia.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PILARES -->
+    <section class="section-light">
+        <div class="inner">
+            <div class="section-label" style="color:#006630;">Áreas de acción</div>
+            <h2 class="section-title section-title-dark">Los tres pilares de la FIA</h2>
+            <div class="pillars-grid">
+                <div class="pillar-card" style="--accent: var(--green);">
+                    <div class="pillar-icon">🏎️</div>
+                    <h3>Deporte y Competición</h3>
+                    <p>Regula todos los campeonatos de automovilismo del mundo, incluyendo la Fórmula 1, el WRC, el WEC, la Fórmula E y decenas de series nacionales e internacionales.</p>
+                </div>
+                <div class="pillar-card" style="--accent: var(--red);">
+                    <div class="pillar-icon">🛡️</div>
+                    <h3>Seguridad Vial</h3>
+                    <p>La FIA lidera campañas globales de seguridad vial, promueve legislación de tráfico responsable y trabaja con gobiernos para reducir los accidentes en carretera en todo el mundo.</p>
+                </div>
+                <div class="pillar-card" style="--accent: var(--blue);">
+                    <div class="pillar-icon">🌍</div>
+                    <h3>Movilidad Sostenible</h3>
+                    <p>Impulsa la transición hacia vehículos eléctricos y combustibles sostenibles, promoviendo una movilidad limpia que minimice el impacto ambiental del transporte.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section class="section-dark">
+        <div class="inner">
+            <div class="section-label">Historia</div>
+            <h2 class="section-title">Cronología de la FIA</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">1904</div>
+                    <h4>Fundación en París</h4>
+                    <p>Trece clubs de automovilismo de diferentes países se reúnen en París para crear la Asociación Internacional de Clubs Reconocidos de Automóviles (AIACR), predecesora de la FIA.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">1946</div>
+                    <h4>Nace la FIA moderna</h4>
+                    <p>La AIACR se reorganiza tras la Segunda Guerra Mundial y adopta el nombre oficial de Federación Internacional del Automóvil, con una estructura más amplia e inclusiva.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">1950</div>
+                    <h4>Primer Campeonato del Mundo de F1</h4>
+                    <p>La FIA pone en marcha el primer Campeonato del Mundo de Fórmula 1, arrancando con el Gran Premio de Gran Bretaña en Silverstone. Nino Farina se convierte en el primer campeón.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">1993</div>
+                    <h4>Max Mosley asume la presidencia</h4>
+                    <p>Bajo su liderazgo, la FIA impulsa una revolución en materia de seguridad en pista, implementando medidas críticas tras las tragedias de Imola 1994.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2009</div>
+                    <h4>Era del KERS y la sostenibilidad</h4>
+                    <p>La FIA introduce la recuperación de energía cinética en F1, marcando el inicio de su compromiso con la tecnología ecológica en el automovilismo de élite.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2021</div>
+                    <h4>Mohammed Ben Sulayem, nuevo presidente</h4>
+                    <p>El piloto de rally emiratí es elegido presidente de la FIA, convirtiéndose en el primer árabe en liderar el organismo. Promueve la diversidad y la expansión del deporte a nuevos mercados.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROL EN F1 -->
+    <section class="section-light">
+        <div class="inner">
+            <div class="section-label" style="color:#006630;">Reglamentación</div>
+            <h2 class="section-title section-title-dark">El papel de la FIA en la Fórmula 1</h2>
+            <table class="roles-table">
+                <thead>
+                    <tr>
+                        <th>Área</th>
+                        <th>Función</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Reglamento Técnico</strong></td>
+                        <td>Define las especificaciones de los monoplazas: dimensiones, peso, aerodinámica, motor y materiales permitidos.</td>
+                        <td><span class="role-tag tag-blue">Técnico</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reglamento Deportivo</strong></td>
+                        <td>Establece las normas de carrera: clasificación, banderas, penalizaciones, paradas en boxes y procedimientos de salida.</td>
+                        <td><span class="role-tag tag-green">Deportivo</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Comisarios de Carrera</strong></td>
+                        <td>Nombra y supervisa a los comisarios que investigan y sancionan incidentes en cada Gran Premio.</td>
+                        <td><span class="role-tag tag-yellow">Arbitraje</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Homologación</strong></td>
+                        <td>Verifica que todos los coches cumplan el reglamento antes de la carrera mediante inspecciones técnicas.</td>
+                        <td><span class="role-tag tag-blue">Técnico</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Seguridad en Pista</strong></td>
+                        <td>Supervisa la implantación del HANS, el Halo, las barreras SAFER y los protocolos de extracción de pilotos.</td>
+                        <td><span class="role-tag tag-red">Seguridad</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Concesión de Licencias</strong></td>
+                        <td>Otorga las súper licencias necesarias para que los pilotos compitan en Fórmula 1 según criterios de experiencia.</td>
+                        <td><span class="role-tag tag-green">Deportivo</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Desarrollo Sostenible</strong></td>
+                        <td>Promueve el uso de combustibles sostenibles al 100% en F1 para 2026 y la descarbonización del campeonato.</td>
+                        <td><span class="role-tag tag-green">Medioambiental</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ESTRUCTURA -->
+    <section class="section-dark">
+        <div class="inner">
+            <div class="section-label">Organización</div>
+            <h2 class="section-title">Estructura interna de la FIA</h2>
+            <div class="org-grid">
+                <div class="org-card">
+                    <div class="org-card-header">
+                        <div class="org-icon">👑</div>
+                        <h3>Presidencia y Consejo Mundial</h3>
+                    </div>
+                    <ul>
+                        <li>El Presidente es elegido cada cuatro años por voto de los miembros.</li>
+                        <li>El Consejo Mundial del Deporte del Motor aprueba cambios en el reglamento de F1.</li>
+                        <li>La Asamblea General es el órgano soberano con representación de todos los países.</li>
+                        <li>Múltiples comités técnicos y deportivos asesoran al consejo.</li>
+                    </ul>
+                </div>
+                <div class="org-card">
+                    <div class="org-card-header">
+                        <div class="org-icon">⚖️</div>
+                        <h3>Tribunal de Apelación</h3>
+                    </div>
+                    <ul>
+                        <li>Instancia máxima para resolver disputas y apelaciones de equipos y pilotos.</li>
+                        <li>Formado por jueces independientes de diferentes países miembro.</li>
+                        <li>Sus decisiones son definitivas e inapelables dentro del sistema FIA.</li>
+                        <li>Ha resuelto casos emblemáticos como el Crashgate o el Spygate.</li>
+                    </ul>
+                </div>
+                <div class="org-card">
+                    <div class="org-card-header">
+                        <div class="org-icon">🔧</div>
+                        <h3>Departamento Técnico</h3>
+                    </div>
+                    <ul>
+                        <li>Ingenieros y expertos que redactan y actualizan el reglamento técnico anualmente.</li>
+                        <li>Supervisan las inspecciones de los monoplazas en cada carrera.</li>
+                        <li>Investigan protestas técnicas presentadas por los equipos.</li>
+                        <li>Desarrollan las especificaciones del safety car y el medical car.</li>
+                    </ul>
+                </div>
+                <div class="org-card">
+                    <div class="org-card-header">
+                        <div class="org-icon">🏁</div>
+                        <h3>Delegado Técnico en Carrera</h3>
+                    </div>
+                    <ul>
+                        <li>Presente en cada Gran Premio para garantizar el cumplimiento de las normas.</li>
+                        <li>Coordina con la dirección de carrera y los comisarios durante el evento.</li>
+                        <li>Emite informes técnicos tras cada Gran Premio al Consejo Mundial.</li>
+                        <li>Actúa como enlace directo entre los equipos y la FIA en pista.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="quote-banner">
+                <blockquote>"La FIA no existe para controlar el automovilismo, sino para protegerlo, desarrollarlo y hacerlo accesible para todos los aficionados del mundo."</blockquote>
+                <cite>— Principios fundacionales de la FIA</cite>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

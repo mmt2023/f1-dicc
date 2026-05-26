@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circuitos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #e8001d;
+    --yellow: #ffd700;
+    --blue: #00aaff;
+    --green: #00c853;
+    --bg-main: linear-gradient(135deg,
+      #c3c7cc 0%, #b5bbc2 25%, #a6adb5 50%, #9aa2ab 75%, #8e979f 100%);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg-main);
+    background-attachment: fixed;
+    color: #111;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 200;
+    background: #0d0d0d;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 100px;
+    border-bottom: 1px solid #222;
+  }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 0.85rem; letter-spacing: 0.08em; text-decoration: none;
+    text-transform: uppercase; position: relative; transition: opacity 0.2s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 2px; background: currentColor; transition: width 0.25s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a:hover { opacity: 0.8; }
+  .nav-links a.red   { color: var(--red); }
+  .nav-links a.white { color: #fff; }
+  .nav-links a.green { color: var(--green); }
+  .nav-links a.blue  { color: var(--blue); }
+  .nav-links a.pink  { color: #ff6ec7; }
+  .nav-links a.orange  { color: #ff7801; }
+
+  .nav-item { position: relative; display: inline-block; }
+  .dropdown {
+    position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    background: #111; padding: 1rem 2rem; display: flex; flex-direction: column;
+    gap: 0.8rem; opacity: 0; visibility: hidden; transition: 0.3s ease; z-index: 300;
+  }
+  .dropdown a {
+    color: var(--blue); text-decoration: none;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.8rem; transition: color 0.2s;
+  }
+  .dropdown a:hover { color: #fff; }
+  .nav-item:hover .dropdown { opacity: 1; visibility: visible; }
+  .dropdown-fia a { color: var(--green); }
+  .dropdown-fia a:hover { color: #fff; }
+
+  .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+  .nav-right img { height: 100px; width: auto; display: block; object-fit: contain; }
+  .nav-right a {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.8rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #fff;
+    text-decoration: underline; display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; padding: 3rem 2rem;
+  }
+  .hero-bg-circle {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 240px; height: 240px; border-radius: 50%;
+    object-fit: cover; opacity: 0.2; z-index: 0;
+  }
+  .hero-text { position: relative; z-index: 1; text-align: center; }
+  .hero-text h1 {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: 0.08em;
+    text-transform: uppercase; color: #111; animation: fadeUp 0.7s ease both;
+  }
+  .hero-text p {
+    font-size: 0.9rem; color: #333; margin-top: 0.5rem;
+    letter-spacing: 0.05em; font-weight: 300; animation: fadeUp 0.7s 0.1s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── GRID ── */
+  .cards-section {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18), 0 0 0 1px var(--red);
+    border-color: var(--red);
+  }
+
+  .card-img {
+    height: 160px;
+    background: linear-gradient(135deg, #1a2535, #0f1a28);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .card:hover .card-img img { transform: scale(1.05); }
+  .card-img::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--red); z-index: 1;
+  }
+  .card-num {
+    position: absolute; top: 10px; left: 12px;
+    background: #111; color: #fff;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: 0.85rem; letter-spacing: 0.08em;
+    padding: 2px 8px; border-radius: 4px; z-index: 2;
+  }
+
+  .card-body { padding: 1.1rem 1.2rem 1.3rem; }
+
+  .card-header {
+    display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem;
+  }
+  .card-flag { font-size: 1.6rem; }
+  .card-name {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: 1.25rem; letter-spacing: 0.05em; text-transform: uppercase; color: #111; line-height: 1;
+  }
+  .card-location {
+    font-size: 0.75rem; color: #555; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: 500; margin-top: 2px;
+  }
+
+  .card-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem; margin-bottom: 0.9rem;
+  }
+  .stat {
+    background: #111; border-radius: 6px; padding: 0.55rem 0.6rem;
+    border-left: 2px solid var(--red);
+  }
+  .stat-label {
+    font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 2px;
+  }
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 0.95rem; color: #fff; letter-spacing: 0.02em;
+  }
+
+  .card-record {
+    background: #0d0d0d; border-radius: 7px; padding: 0.65rem 0.9rem;
+    display: flex; align-items: center; gap: 0.7rem;
+    border: 1px solid #2a2a2a;
+  }
+  .record-icon { font-size: 1.3rem; }
+  .record-lbl { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: #777; }
+  .record-time {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+    font-size: 1.1rem; color: var(--yellow); letter-spacing: 0.04em; line-height: 1;
+  }
+  .record-who { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-links">
+    <a href="mini-historia.html" class="red">Mini Historia</a>
+    <a href="conceptos-clave.html" class="white">Conceptos Clave</a>
+    <div class="nav-item">
+      <a href="#" class="green">FIA</a>
+      <div class="dropdown dropdown-fia">
+        <a href="definicion-fia.html">Definición FIA</a>
+        <a href="ruedas.html">Ruedas</a>
+        <a href="reglamento.html">Reglamento</a>
+        <a href="estrategia.html">Estrategia</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#" class="blue">Equipos</a>
+      <div class="dropdown">
+        <a href="pilotos.html">Pilotos</a>
+        <a href="escuderias.html">Escuderías</a>
+        <a href="circuitos.html">Circuitos</a>
+      </div>
+    </div>
+    <a href="comentaristas.html" class="pink">Comentaristas</a>
+    <a href="fan-zone.html" class="orange">Fan Zone</a>
+  </div>
+  <div class="nav-right">
+    <a href="index.html">Diccionario de F1</a>
+    <img src="fotos/logo.png" alt="Logo F1">
+  </div>
+</nav>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>🏎️ Circuitos</h1>
+    <p>Top circuitos más miticos de la F1</p>
+  </div>
+</section>
+<!-- CARDS -->
+<section class="cards-section">
+  <div class="cards-grid">
+
+    <!-- #1 Monaco -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#1</span><img src="fotos/monaco.png" style="width: 270px;"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇲🇨</span>
+          <div><div class="card-name">Circuit de Monaco</div><div class="card-location">Monte Carlo, Mónaco</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">3.337 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">78</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">1950</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:12.909</div><div class="record-who">Lando Norris · McLaren · 2024</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #2 Monza -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#2</span><img src="fotos/monza.png" style="width: 270px;"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇮🇹</span>
+          <div><div class="card-name">Autodromo di Monza</div><div class="card-location">Monza, Italia</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">5.793 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">53</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">1950</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:21.046</div><div class="record-who">R. Barrichello · Ferrari · 2004</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #3 Silverstone -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#3</span><img src="fotos/silverstone.avif" style="width: 270px;"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇬🇧</span>
+          <div><div class="card-name">Silverstone Circuit</div><div class="card-location">Northamptonshire, Reino Unido</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">5.891 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">52</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">1950</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:27.097</div><div class="record-who">Max Verstappen · Red Bull · 2020</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #4 Spa -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#4</span><img src="fotos/spa.png" style="width: 270px;"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag"></span>
+          <div><div class="card-name">Spa-Francorchamps</div><div class="card-location">Stavelot, Bélgica</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">7.004 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">44</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">1950</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:41.252</div><div class="record-who">Valtteri Bottas · Mercedes · 2018</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #5 Suzuka -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#5</span><img src="fotos/suzuka.png" style="width: 270px;"></div>>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇯🇵</span>
+          <div><div class="card-name">Suzuka Circuit</div><div class="card-location">Suzuka, Japón</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">5.807 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">53</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">1987</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:30.983</div><div class="record-who">Lewis Hamilton · Mercedes · 2019</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #6 Interlagos -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#6</span><img src="fotos/interlagos.png" style="width: 270px;"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇧🇷</span>
+          <div><div class="card-name">Autódromo Interlagos</div><div class="card-location">São Paulo, Brasil</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">4.309 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">71</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">1973</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:10.540</div><div class="record-who">Valtteri Bottas · Mercedes · 2018</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #7 Albert Park -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#7</span><img src="fotos/albertpark.avif" style="width: 270px;"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇦🇺</span>
+          <div><div class="card-name">Albert Park Circuit</div><div class="card-location">Melbourne, Australia</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">5.278 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">58</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">1996</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:19.813</div><div class="record-who">Charles Leclerc · Ferrari · 2022</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #8 Yas Marina -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#8</span><img src="fotos/yasmarina.png" style="width: 270px;"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇦🇪</span>
+          <div><div class="card-name">Yas Marina Circuit</div><div class="card-location">Abu Dhabi, Emiratos Árabes</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">5.281 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">58</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">2009</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:26.103</div><div class="record-who">Max Verstappen · Red Bull · 2021</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #9 COTA -->
+    <div class="card">
+      <div class="card-img"><span class="card-num">#4</span><img src="fotos/america.png" style="width: 270px;"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-flag">🇺🇸</span>
+          <div><div class="card-name">Circuit of the Americas</div><div class="card-location">Austin, Texas, EE.UU.</div></div>
+        </div>
+        <div class="card-stats">
+          <div class="stat"><div class="stat-label">Longitud</div><div class="stat-value">5.513 km</div></div>
+          <div class="stat"><div class="stat-label">Vueltas</div><div class="stat-value">56</div></div>
+          <div class="stat"><div class="stat-label">Desde</div><div class="stat-value">2012</div></div>
+        </div>
+        <div class="card-record">
+          <span class="record-icon">⏱️</span>
+          <div><div class="record-lbl">Récord de vuelta</div><div class="record-time">1:36.169</div><div class="record-who">Charles Leclerc · Ferrari · 2019</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>
